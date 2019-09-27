@@ -1,6 +1,7 @@
 from src import ships
 from properties import ship_properties_mapping, ship_properties
 from properties import defence_properties_mapping, defence_properties
+from properties import defence_properties_mapping, defence_properties
 
 
 def universe_factory():

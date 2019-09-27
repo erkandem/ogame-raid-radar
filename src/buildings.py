@@ -126,3 +126,18 @@ class UndergroundCrystalDen(Storage):
 class SeabedDeuteriumDen(Storage):
     pass
 
+
+class MoonBuildings(Building):
+    pass
+
+
+class LunarBase(MoonBuildings):
+    pass
+
+
+class SensorPhalanx(MoonBuildings):
+    pass
+
+
+class JumpGate(MoonBuildings):
+    pass

@@ -106,7 +106,7 @@ ship_properties_mapping = {
         'StructuralIntegrity': 'structural_integrity',
         'CargoCapacity': 'base_cargo',
         'WeaponPower': 'base_weapon',
-        'ShieldPower': 'base_shield',
+        'ShieldPower': 'base_shield'
     }
 }
 
@@ -184,7 +184,7 @@ defence_properties_mapping = {
         'Armour': 'base_armour',
         'StructuralIntegrity': 'structural_integrity',
         'WeaponPower': 'base_weapon',
-        'ShieldPower': 'base_shield',
+        'ShieldPower': 'base_shield'
     }
 }
 
@@ -360,49 +360,69 @@ research_parameters = {
 # %%
 building_properties_extended = {
     'MetalMine': {
-        'Metal': 0,
-        'Crystal': 0,
-        'Deuterium': 0,
-        'Costfactor': 1.5
-    },
-    'SolarPlant': {
-        'Costfactor': 1.5
-    },
-    'DeuteriumSynthesizer': {
-        'Costfactor': 1.5
+        'UpgradeCostBase': 1.5,
+        'ProductionBase': 1.1,
+        'ProductionFactor': 30,
+        'ConsumptionFactor': 10
     },
     'CrystalMine': {
-        'Costfactor': 1.6
+        'UpgradeCostBase': 1.6,
+        'ProductionBase': 1.1,
+        'ProductionFactor': 20,
+        'ConsumptionFactor': 10
+    },
+    'DeuteriumSynthesizer': {
+        'UpgradeCostBase': 1.5,
+        'ProductionBase': 1.1,
+        'ProductionFactor': 1,
+        'ConsumptionFactor': 20
+    },
+    'SolarPlant': {
+        'UpgradeCostBase': 1.5,
+        'ProductionBase': 1.1,
+        'ProductionFactor': 20,
+        'ConsumptionFactor': 0
     },
     'FusionReactor': {
-        'Costfactor': 1.8
+        'UpgradeCostBase': 1.8,
+        'ProductionBase': 1,
+        'ProductionFactor': 30,
+        'ConsumptionFactor': 10
+    }
+}
+
+building_properties_extended_mapping = {
+    'attributes': {
+        'UpgradeCostBase': 'upgrade_cost_factor',
+        'ConsumptionFactor': 'consumption_factor',
+        'ProductionFactor': 'production_factor'
     }
 }
 
 building_properties = {
     'MetalMine': {
-        'Metal': 60, 'Crystal': 15, 'Deuterium': 0.0, 'Energy': 0.0,
+        'Metal': 60, 'Crystal': 15, 'Deuterium': 0.0, 'Energy': 0.0
     },
     'CrystalMine': {
-        'Metal': 48.0, 'Crystal': 24.0, 'Deuterium': 0.0, 'Energy': 0.0,
+        'Metal': 48.0, 'Crystal': 24.0, 'Deuterium': 0.0, 'Energy': 0.0
     },
     'DeuteriumSynthesizer': {
-        'Metal': 225.0, 'Crystal': 75.0, 'Deuterium': 0.0, 'Energy': 0.0,
+        'Metal': 225.0, 'Crystal': 75.0, 'Deuterium': 0.0, 'Energy': 0.0
     },
     'SolarPlant': {
-        'Metal': 75.0, 'Crystal': 30.0, 'Deuterium': 0.0, 'Energy': 0.0,
+        'Metal': 75.0, 'Crystal': 30.0, 'Deuterium': 0.0, 'Energy': 0.0
     },
     'FusionReactor': {
-        'Metal': 900.0, 'Crystal': 360.0, 'Deuterium': 180.0, 'Energy': 0.0,
+        'Metal': 900.0, 'Crystal': 360.0, 'Deuterium': 180.0, 'Energy': 0.0
     },
     'MetalStorage': {
-        'Metal': 1000.0, 'Crystal': 0.0, 'Deuterium': 0.0, 'Energy': 0.0,
+        'Metal': 1000.0, 'Crystal': 0.0, 'Deuterium': 0.0, 'Energy': 0.0
     },
     'CrystalStorage': {
-        'Metal': 1000.0, 'Crystal': 500.0, 'Deuterium': 0.0, 'Energy': 0.0,
+        'Metal': 1000.0, 'Crystal': 500.0, 'Deuterium': 0.0, 'Energy': 0.0
     },
     'DeuteriumTank': {
-        'Metal': 1000.0, 'Crystal': 1000.0, 'Deuterium': 0.0, 'Energy': 0.0,
+        'Metal': 1000.0, 'Crystal': 1000.0, 'Deuterium': 0.0, 'Energy': 0.0
     }
 }
 
@@ -429,20 +449,20 @@ building_properties_mapping = {
 
 moon_buildings_properties = {
     'LunarBase': {
-        'Metal': 20000.0, 'Crystal': 40000.0, 'Deuterium': 20000.0, 'Energy': 0.0,
+        'Metal': 20000.0, 'Crystal': 40000.0, 'Deuterium': 20000.0, 'Energy': 0.0
     },
     'SensorPhalanx': {
-        'Metal': 20000, 'Crystal': 40000, 'Deuterium': 20000, 'Energy': 0,
+        'Metal': 20000, 'Crystal': 40000, 'Deuterium': 20000, 'Energy': 0
     },
     'JumpGate': {
-        'Metal': 2000000, 'Crystal': 4000000, 'Deuterium': 2000000, 'Energy': 0,
+        'Metal': 2000000, 'Crystal': 4000000, 'Deuterium': 2000000, 'Energy': 0
     }
 }
 moon_buildings_properties_mapping = {
     'objects': {
         'LunarBase': buildings.LunarBase(),
         'SensorPhalanx': buildings.SensorPhalanx(),
-        'JumpGate': buildings.JumpGate(),
+        'JumpGate': buildings.JumpGate()
     },
     'attributes': {
         'Metal': 'cost_metal',
@@ -474,24 +494,24 @@ facility_properties_mapping = {
 
 facility_properties = {
     'RoboticsFactory': {
-        'Metal': 400.0, 'Crystal': 120.0, 'Deuterium': 200.0, 'Energy': 0.0,
+        'Metal': 400.0, 'Crystal': 120.0, 'Deuterium': 200.0, 'Energy': 0.0
     },
     'Shipyard': {
-        'Metal': 400.0, 'Crystal': 200.0, 'Deuterium': 100.0, 'Energy': 0.0,
+        'Metal': 400.0, 'Crystal': 200.0, 'Deuterium': 100.0, 'Energy': 0.0
     },
     'ResearchLab': {
-        'Metal': 200.0, 'Crystal': 400.0, 'Deuterium': 200.0, 'Energy': 0.0,
+        'Metal': 200.0, 'Crystal': 400.0, 'Deuterium': 200.0, 'Energy': 0.0
     },
     'Terraformer': {
-        'Metal': 0.0, 'Crystal': 50000.0, 'Deuterium': 100000.0, 'Energy': 1000.0,
+        'Metal': 0.0, 'Crystal': 50000.0, 'Deuterium': 100000.0, 'Energy': 1000.0
     },
     'AllianceDepot': {
-        'Metal': 20000.0, 'Crystal': 40000.0, 'Deuterium': 0.0, 'Energy': 0.0,
+        'Metal': 20000.0, 'Crystal': 40000.0, 'Deuterium': 0.0, 'Energy': 0.0
     },
     'MissileSilo': {
-        'Metal': 20000.0, 'Crystal': 20000.0, 'Deuterium': 1000.0, 'Energy': 0.0,
+        'Metal': 20000.0, 'Crystal': 20000.0, 'Deuterium': 1000.0, 'Energy': 0.0
     },
     'NaniteFactory': {
-        'Metal': 1000000.0, 'Crystal': 500000.0, 'Deuterium': 100000.0, 'Energy': 0.0,
+        'Metal': 1000000.0, 'Crystal': 500000.0, 'Deuterium': 100000.0, 'Energy': 0.0
     }
 }

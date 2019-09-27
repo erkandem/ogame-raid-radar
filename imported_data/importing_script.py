@@ -13,7 +13,6 @@ txt2 = [elm.split('\t') for elm in txt1]
 txt3 = [[cell.strip() for cell in row] for row in txt2]
 
 
-
 # %% mapping prep
 header = txt3[0][1:]
 row_names = [elm[0] for elm in txt3[1:]]
@@ -34,7 +33,6 @@ data = {
     ship_name: {prop_name: prop_value for prop_name, prop_value in zip(header, row)}
     for ship_name, row in zip(row_names, raw_data)
 }
-
 
 #%%
 property_names = ['Metal', 'Crystal', 'Deuterium', 'Energy']

@@ -7,11 +7,13 @@ Coords = namedtuple(
     ['galaxy', 'system', 'planet']
 )
 
-Location = namedtuple(
-    'Location',
-    ['coords', 'object']
-)
 
+class StellarObject:
+    pass
+
+class Location:
+    coords: Coords
+    object: StellarObject
 
 class Universe:
     galaxies: {}
@@ -25,11 +27,11 @@ class System:
     planets: {}
 
 
-class DebrisField:
+class DebrisField(StellarObject):
     resources: {}
 
 
-class Moon:
+class Moon(StellarObject):
     coods: Coords
     fields: Union[float, int]
     resources: {}
@@ -40,7 +42,7 @@ class Moon:
         self.__dict__.update(kwargs)
 
 
-class Planet:
+class Planet(StellarObject):
     coords: Coords
     fields: Union[float, int]
     resources: {}

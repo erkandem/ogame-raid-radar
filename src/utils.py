@@ -1,5 +1,6 @@
 from collections import namedtuple
 import math
+from typing import Union
 
 from src.planet import Location
 
@@ -11,12 +12,12 @@ ExchangeRate = namedtuple(
 
 def calc_distance(p1: Location, p2: Location):
     if p1.coords.galaxy != p1.coords.galaxy:
-        distance = 20000 * math.fabs(p2.coords.galaxy - p1.coord.planet)
+        distance = 20000 * math.fabs(p2.coords.galaxy - p1.coords.planet)
     else:
-        if p1['system'] != p2['system']:
-            distance = 2700 + 95 * math.fabs(p2.coordssystem - p1.coords.system)
+        if p1.coords.system != p2.coords.system:
+            distance = 2700 + 95 * math.fabs(p2.coords.system - p1.coords.system)
         else:
-            if p1.coods.planet != p2.coords.planet:
+            if p1.coords.planet != p2.coords.planet:
                 distance = 1000 + 5 * math.fabs(p2.coords.planet - p1.coords.planet)
             else:
                 raise ValueError
@@ -25,7 +26,7 @@ def calc_distance(p1: Location, p2: Location):
 
 def calc_flight_time(p1: Location, p2: Location):
     """ stub """
-    speed_factor = 1.0
+    speed_factor = 1.0  # element  [0, 1]
     minimum_speed = 100
     universe_fleet_speed = 7
     distance = calc_distance(p1, p2)
@@ -35,9 +36,9 @@ def calc_flight_time(p1: Location, p2: Location):
 
 
 class OrePrice:
-    metal: float = None
-    crystal: float = None
-    deuterium: float = None
+    metal: Union[float, int] = None
+    crystal: Union[float, int] = None
+    deuterium: Union[float, int] = None
 
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)

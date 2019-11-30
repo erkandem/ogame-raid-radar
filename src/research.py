@@ -1,4 +1,5 @@
 from src.utils import OrePrice
+from math import floor, ceil
 
 
 class ResearchField:
@@ -12,10 +13,10 @@ class ResearchField:
         cost_multiplier = self.get_cost_multiplier()
         return self.base_cost * cost_multiplier
 
-    def calculate_research_time(self, research_Lab_level):
+    def calculate_research_time(self, research_lab_level):
         universe_speed = 7
         cost = self.get_cost()
-        gross_factor = (1 + research_Lab_level)
+        gross_factor = (1 + research_lab_level)
         research_time = (cost.m + cost.c) / (universe_speed * 1000 * gross_factor)
         return research_time
 
@@ -104,28 +105,26 @@ class HyperspaceDrive(Drive):
         super().__init__(*args)
     pass
 
-from math import  floor, ceil
-
 
 class PlasmasTechAdjustment:
 
     def __init__(self, level: int = 0):
         self.level = level
 
-    def _get_metal_factor(self):
+    def get_metal_factor(self):
         return 1 + self.level * 0.01
 
-    def _get_crystal_factor(self):
+    def get_crystal_factor(self):
         return 1 + self.level * 0.0066
 
-    def _get_deuterium_factor(self):
+    def get_deuterium_factor(self):
         return 1 + self.level * 0.0033
 
-    def _get_metal_production(self, metal):
-        return floor(self._get_metal_factor() * metal)
+    def get_metal_production(self, metal):
+        return floor(self.get_metal_factor() * metal)
 
-    def _get_crystal_production(self, crystal):
-        return floor(self._get_crystal_factor() * crystal)
+    def get_crystal_production(self, crystal):
+        return floor(self.get_crystal_factor() * crystal)
 
-    def _get_deuterium_production(self, deuterium):
-        return floor(self._get_deuterium_factor() * deuterium)
+    def get_deuterium_production(self, deuterium):
+        return floor(self.get_deuterium_factor() * deuterium)

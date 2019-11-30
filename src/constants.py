@@ -1,5 +1,7 @@
 """
-Alain Gilbert (@alain_gilbert)
+
+taken from work done by [alaingilbert](https://github.com/alaingilbert/pyogame)
+
 """
 Buildings = {
     'MetalMine': 1,

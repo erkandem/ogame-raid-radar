@@ -83,13 +83,14 @@ n_ = go.Pie(
 
 #%%
 fig = go.Figure(data=data)
-fig.show()
 
-#%%
-from src.scores_api import HighScoresApi
-from src.backbone_app import get_janice
 
-janice = get_janice()
-janice_scores = HighScoresApi(162, 'en', do_init=True)
-inactive = janice.players.query("status == 'i' ")
-# planet_of_inactivate = janice.universe.join(inactive, )
+def sth_completly_different():
+    """ found undocumented. keep until next review Nov2019"""
+    from src.scores_api import HighScoresApi
+    from src.backbone_app import get_janice
+
+    janice = get_janice()
+    janice_scores = HighScoresApi(162, 'en', do_init=True)
+    inactive = janice.players.query("status == 'i' ")
+    # planet_of_inactivate = janice.universe.join(inactive, )

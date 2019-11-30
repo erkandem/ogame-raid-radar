@@ -71,8 +71,8 @@ class DeuteriumSynthesizer(Building):
 
 
 class SolarPlant(Building):
-    def __init__(self, level=None):
-        super().__init__(production_factor=20, consumption_factor=0, level=level)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
 
 class FusionReactor(Building):
@@ -101,6 +101,7 @@ class Storage:
     capacity: Union[float, int]
     level: int
     base_cost: OrePrice
+
     def get_capacity(self, **kwargs):
         if 'level' in kwargs:
             level = kwargs['level']
@@ -150,18 +151,6 @@ class DeuteriumTank(Storage):
         m = 500 * 2 ** level
         c = 500 * 2 ** level
         return OrePrice(metal=m, crystal=c, deuterium=0)
-
-
-class ShieldedMetalDen(Storage):
-    pass
-
-
-class UndergroundCrystalDen(Storage):
-    pass
-
-
-class SeabedDeuteriumDen(Storage):
-    pass
 
 
 class MoonBuildings(Building):

@@ -6,7 +6,6 @@ from properties import building_properties, building_properties_mapping
 from properties import moon_buildings_properties, moon_buildings_properties_mapping
 
 
-
 def initializing_logic(props: dict, prop_to_obj_mapping: dict):
     init_objects = []
     for obj_name, obj in prop_to_obj_mapping['objects'].items():
@@ -45,3 +44,7 @@ def universe_factory():
         'ships': ship_factory(),
         'defences': defence_factory()
     }
+
+
+if __name__ == '__main__':
+    game = universe_factory()

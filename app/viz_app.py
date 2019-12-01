@@ -1,17 +1,11 @@
-import flask
-
-app = flask.Flask('oGame NSE')
-
-
-@app.route('/')
-def index_page():
-    return flask.render_template('index.html')
+from src.api.scores_api import HighScoresApi
+from src.api.universe_api import get_janice
 
 
-@app.route('/', methods=['POST'])
-def response():
-    return flask.render_template('response.html')
+def sth_completly_different():
+    """ found undocumented. keep until next review Nov2019"""
 
-
-if __name__ == '__main__':
-    app.run()
+    janice = get_janice()
+    janice_scores = HighScoresApi(162, 'en', do_init=True)
+    inactive = janice.players.query("status == 'i' ")
+    # planet_of_inactivate = janice.universe.join(inactive, )

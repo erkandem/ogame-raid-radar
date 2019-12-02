@@ -113,7 +113,7 @@ class UniverseFigure:
         )
         return df
 
-    def get_default_layout(self):
+    def _get_default_layout(self):
         return go.Layout({
             'autosize': False,
             'width': 700,
@@ -139,44 +139,11 @@ class UniverseFigure:
             }
         })
 
-    def get_universe_fig_data(self, df, final_query_str):
+    def _get_figure_data(self, df):
         """
-            df:
             query_str:
-
         """
-        data = []
-        for planet_slot in self.planets_range:
-            df_slice = df.query(final_query_str)
-            data.append(
-                go.Scattergl(
-                    dict(
-                        x=(df_slice['x'] * df_slice['r']),
-                        y=(df_slice['y'] * df_slice['r']),
-                        mode='markers',
-                        marker=dict(
-                            symbol='circle',
-                            size=[6 for elm in range(len(df_slice))],
-                            color=df_slice['taken'].apply(lambda x: '#66ff66' if x == 0 else '#ff6666'),
-                 #           colorscale=[
-                 #               [0, 'rgba(250, 250, 60, 0)'],
-                 #               [1, 'rgba(204, 0, 0, 0.9)']
-                 #           ]
-                        ),
-                        name=f'{planet_slot}. slot',
-                        hoverinfo='text',
-                        hovertext=df_slice['coords']
-                    )
-                )
-            )
-        return data
-
-    def get_universe_fig_data2(self, df, query_str):
-        """
-            df:
-            query_str:
-
-        """
+        query_str = 'planet == @planet_slot'
         data = [
                 go.Scattergl({
                         'x': (df.query(query_str)['x'] * df.query(query_str)['r']),
@@ -190,7 +157,8 @@ class UniverseFigure:
                         'name': f'{planet_slot}. slot',
                         'hoverinfo': 'text',
                         'hovertext': df.query(query_str)['coords']
-            }) for planet_slot in self.planets_range]
+            }) for planet_slot in self.planets_range
+        ]
         return data
 
     def what_is_it_good_for(self):
@@ -205,25 +173,73 @@ class UniverseFigure:
             hole=self.minimum_distance
         )
 
-    def _get_figure(self, df, final_query_str):
-        data = self.get_universe_fig_data2(df, final_query_str)
-        layout = self.get_default_layout()
+    def _get_figure(self, df):
+        data = self._get_figure_data(df)
+        layout = self._get_default_layout()
         return go.Figure(
             data=data,
             layout=layout
         )
 
-    def get_taken_planets_fig(self):
-        final_query_str = ' '.join(['planet == @planet_slot', 'and', 'taken == 1'])
-        return self._get_figure(self.df, final_query_str)
+    def get_dummy_planets_data(self):
+        return self.df_dummy
 
-    def get_free_planets_fig(self):
-        final_query_str = ' '.join(['planet == @planet_slot', 'and', 'taken == 0'])
-        return self._get_figure(self.df, final_query_str)
+    def get_taken_planets_data(self):
+        query_str = 'taken == 1'
+        return self.df.query(query_str)
+
+    def get_free_planets_data(self):
+        query_str = 'taken == 0'
+        return self.df.query(query_str)
+
 
     def get_dummy_planets_fig(self):
-        final_query_str = ' '.join(['planet == @planet_slot'])
-        return self._get_figure(self.df_dummy, final_query_str)
+        df = self.get_dummy_planets_data()
+        return self._get_figure(df)
+
+    def get_taken_planets_fig(self):
+        df = self.get_taken_planets_data()
+        return self._get_figure(df)
+
+    def get_free_planets_fig(self):
+        df = self.get_free_planets_data()
+        return self._get_figure(df)
+
+    def get_taken_inactive_planets_fig(self):
+        df = self.get_taken_inactive_planets_data()
+        return self._get_figure(df)
+
+    def get_taken_active_planets_fig(self):
+        df = self.get_taken_active_planets_data()
+        return self._get_figure(df)
+
+    def _get_active_players(self):
+        return self.universe_data.players.query("status != 'i' ")['id'].tolist()
+
+    def _get_inactive_players(self):
+        return self.universe_data.players.query("status == 'i' ")['id'].tolist()
+
+    def get_taken_inactive_planets_data(self):
+        inactive = self._get_inactive_players()
+        query_str = 'player == @inactive'
+        coords = self.universe_data.universe.query(query_str)['coords'].to_list()
+        return self.df.query('taken == 1 and coords in @coords')
+
+    def get_taken_active_planets_data(self):
+        active = self._get_active_players()
+        query_str = 'player == @active'
+        coords = self.universe_data.universe.query(query_str)['coords'].to_list()
+        return self.df.query('taken == 1 and coords in @coords')
+
+
+def cast_to_dash_table(df):
+    return dse.DataTable(**{
+        'columns': [{"name": col, "id": col} for col in df.columns],
+        'data': df.to_dict('records'),
+        'id': 'universe-data-table',
+        'filter_action': 'native',
+        'sort_action': 'native'
+    })
 
 
 def get_initial_app_layout():

@@ -1,4 +1,14 @@
 """
+
+Basic Data Table functionality works but
+the data like x, y and r are irelevant
+
+More useful would be actionable data like:
+ - player name
+ - ranking
+ - planet name
+
+
 from collections import namedtuple
 Condition = namedtuple('Condition', ['column', 'operator', 'variable'])
 ConditionGroup = namedtuple('ConditionGroup', ['c1', 'conj', 'c2'])

@@ -41,7 +41,7 @@ import dash_table as dse
 import flask
 import pandas as pd
 import plotly.graph_objects as go
-
+import dash_table.Format
 from src.api.universe_api import get_janice_universe, UniverseDataApi
 from src.api.scores_api import get_janice_highscore, HighScoresDataApi
 
@@ -192,6 +192,31 @@ class UniverseFigure:
         query_str = 'taken == 0'
         return self.df.query(query_str)
 
+    def get_universe_with_player_deteils(self, df_raw):
+        df_player_name = UNIVERSE_FIGURE.universe_data.players.loc[:, ['id', 'name', 'status', 'alliance']]
+        df_player_name.set_index('alliance', inplace=True)
+        df_player_name.rename(index=str, columns={'id': 'player_id','name': 'player_name'}, inplace=True)
+
+        allience_names = UNIVERSE_FIGURE.universe_data.alliences.loc[:, ['id', 'name']]
+        allience_names.set_index('id', inplace=True)
+        allience_names.rename(index=str, columns={'name': 'allience_name'}, inplace=True)
+
+        df_player = df_player_name.join(allience_names)
+        df_player.set_index('player_id', inplace=True, drop=True)
+
+        df_eco_score = UNIVERSE_FIGURE.highscore_data.economy.loc[:, ['id', 'score']]
+        df_eco_score.rename(index=str, columns={'id': 'player_id', 'score': 'eco_score'}, inplace=True)
+        df_eco_score.set_index('player_id', inplace=True)
+        df_player_with_score = df_player.join(df_eco_score)
+
+        df_detailed = df_raw.set_index('player').join(df_player_with_score)
+
+        df_viz = UNIVERSE_FIGURE.df.loc[:, ['coords', 'x', 'y', 'r', 'n', 'taken', 'planet', 'galaxy', 'system']]
+        df_viz.set_index('coords', inplace=True)
+        df = df_detailed.set_index('coords').join(df_viz)
+        df.reset_index(inplace=True)
+        df = df[['n', 'x', 'y', 'r', 'galaxy', 'system', 'planet', 'taken', 'coords', 'planet_name', 'player_name', 'status', 'allience_name', 'eco_score']]
+        return df
 
     def get_dummy_planets_fig(self):
         df = self.get_dummy_planets_data()
@@ -234,11 +259,19 @@ class UniverseFigure:
 
 def cast_to_dash_table(df):
     return dse.DataTable(**{
-        'columns': [{"name": col, "id": col} for col in df.columns],
+        'columns': [{'name': col, 'id': col} for col in df.columns],
         'data': df.to_dict('records'),
         'id': 'universe-data-table',
         'filter_action': 'native',
-        'sort_action': 'native'
+        'sort_action': 'native',
+        'export_format': 'csv',
+        'export_headers': 'display',
+        'style_cell': {
+            'minWidth': '40px',
+            'maxWidth': '100px',
+            'textOverflow': 'clip',
+            'overflow': 'hidden',
+        }
     })
 
 
@@ -282,10 +315,12 @@ def get_initial_app_layout():
     ], className='aptry')
 
 
-# UNIVERSE_FIGURE = UniverseFigure()
+dbug = '''
+UNIVERSE_FIGURE = UniverseFigure()
 import pickle
-# with open('cache.pickle', 'wb') as file:
-#     pickle.dump(UNIVERSE_FIGURE, file)
+with open('cache.pickle', 'wb') as file:
+     pickle.dump(UNIVERSE_FIGURE, file)'''
+import pickle
 with open('cache.pickle', 'rb') as file_2:
     UNIVERSE_FIGURE = pickle.load(file_2)
 
@@ -339,64 +374,14 @@ def render_data_table(activeOrInactive, takenOrFree, child):
         query_str = 'player == @active'
         df_raw = UNIVERSE_FIGURE.universe_data.universe.query(query_str)
         df_raw.rename(index=str, columns={'name': 'planet_name'}, inplace=True)
-
-        df_player_name = UNIVERSE_FIGURE.universe_data.players.loc[:, ['id', 'name', 'status', 'alliance']]
-        df_player_name.set_index('alliance', inplace=True)
-        df_player_name.rename(index=str, columns={'id': 'player_id', 'name': 'player_name'}, inplace=True)
-
-        allience_names = UNIVERSE_FIGURE.universe_data.alliences.loc[:, ['id', 'name']]
-        allience_names.set_index('id', inplace=True)
-        allience_names.rename(index=str, columns={'name': 'allience_name'}, inplace=True)
-
-        df_player = df_player_name.join(allience_names)
-        df_player.set_index('player_id', inplace=True, drop=True)
-
-        df_eco_score = UNIVERSE_FIGURE.highscore_data.economy.loc[:, ['id', 'score']]
-        df_eco_score.rename(index=str, columns={'id': 'player_id', 'score': 'eco_score'}, inplace=True)
-        df_eco_score.set_index('player_id', inplace=True)
-        df_player_with_score = df_player.join(df_eco_score)
-
-        df_detailed = df_raw.set_index('player').join(df_player_with_score)
-
-        df_viz = UNIVERSE_FIGURE.df.loc[:, ['coords', 'galaxy', 'system', 'planet']]
-        df_viz = df_viz.loc[:, ['coords', 'n']]
-        df_viz.set_index('coords', inplace=True)
-        df = df_detailed.set_index('coords').join(df_viz)
-
-        df.reset_index(inplace=True)
-        df = df[['n', 'coords', 'planet_name', 'player_name', 'status', 'allience_name', 'eco_score']]
+        df = UNIVERSE_FIGURE.get_universe_with_player_deteils(df_raw)
         return html.Div(cast_to_dash_table(df))
     if activeOrInactive == 'inactive' and takenOrFree == 'taken':
         inactive = UNIVERSE_FIGURE._get_inactive_players()
         query_str = 'player == @inactive'
         df_raw = UNIVERSE_FIGURE.universe_data.universe.query(query_str)
         df_raw.rename(index=str, columns={'name': 'planet_name'}, inplace=True)
-
-        df_player_name = UNIVERSE_FIGURE.universe_data.players.loc[:, ['id', 'name', 'status', 'alliance']]
-        df_player_name.set_index('alliance', inplace=True)
-        df_player_name.rename(index=str, columns={'id': 'player_id','name': 'player_name'}, inplace=True)
-
-        allience_names = UNIVERSE_FIGURE.universe_data.alliences.loc[:, ['id', 'name']]
-        allience_names.set_index('id', inplace=True)
-        allience_names.rename(index=str, columns={'name': 'allience_name'}, inplace=True)
-
-        df_player = df_player_name.join(allience_names)
-        df_player.set_index('player_id', inplace=True, drop=True)
-
-        df_eco_score = UNIVERSE_FIGURE.highscore_data.economy.loc[:, ['id', 'score']]
-        df_eco_score.rename(index=str, columns={'id': 'player_id', 'score': 'eco_score'}, inplace=True)
-        df_eco_score.set_index('player_id', inplace=True)
-        df_player_with_score = df_player.join(df_eco_score)
-
-        df_detailed = df_raw.set_index('player').join(df_player_with_score)
-
-        df_viz = UNIVERSE_FIGURE.df.loc[:, ['coords', 'galaxy', 'system', 'planet']]
-        df_viz = df_viz.loc[:, ['coords', 'n']]
-        df_viz.set_index('coords', inplace=True)
-        df = df_detailed.set_index('coords').join(df_viz)
-
-        df.reset_index(inplace=True)
-        df = df[['n', 'coords', 'planet_name', 'player_name', 'status', 'allience_name', 'eco_score']]
+        df = UNIVERSE_FIGURE.get_universe_with_player_deteils(df_raw)
         return html.Div(cast_to_dash_table(df))
     if activeOrInactive == 'active' and takenOrFree == 'free':
         df = UNIVERSE_FIGURE.get_free_planets_data()

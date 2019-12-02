@@ -162,11 +162,11 @@ class UniverseFigure:
         return data
 
     def what_is_it_good_for(self):
-        # %% append segmenting hint
+        #%% append segmenting hint
         labels = ['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine']
         values = [4500, 2500, 1053, 500]
 
-        # %% Use `hole` to create a donut-like pie chart
+        #%% Use `hole` to create a donut-like pie chart
         n_ = go.Pie(
             labels=labels,
             values=values,
@@ -255,18 +255,32 @@ def get_initial_app_layout():
                 {'label': 'taken', 'value': 'taken'}
             ],
             value='taken',
-            id='universe-taken-or-free-toogle'
+            id='universe-taken-free-toggle'
         ),
-        dcc.Loading(
-            html.Div(
+        dcc.RadioItems(
+            options=[
+                {'label': 'active', 'value': 'active'},
+                {'label': 'inactive', 'value': 'inactive'}
+            ],
+            value='active',
+            id='universe-active-inactive-toggle'
+        ),
+        html.Div([
+            dcc.Loading(
                 dcc.Graph(
-                    figure=UNIVERSE_FIGURE.get_dummy_planets_fig(),
-                    config={},
-                    id='universe-graph'
-                )
+                        figure=UNIVERSE_FIGURE.get_dummy_planets_fig(),
+                        config={},
+                        id='universe-graph'
+                    )
+                ),
+            dcc.Loading(
+                html.Div([
+                    dse.DataTable()
+                ], id='universe-data-table-wrapper')
             )
-        )], className='aptry'
-    )
+        ])
+    ], className='aptry')
+
 
 # UNIVERSE_FIGURE = UniverseFigure()
 import pickle
@@ -285,6 +299,7 @@ app = dash.Dash(
 
 app.layout = get_initial_app_layout()
 
+
 cb = '''
 @app.callback(
     Output('universe-graph', 'figure'),
@@ -297,13 +312,98 @@ def rerender_figure(n_clicks):
 
 @app.callback(
     Output('universe-graph', 'figure'),
-    [Input('universe-taken-or-free-toogle', 'value')],
+    [Input('universe-active-inactive-toggle', 'value'),
+     Input('universe-taken-free-toggle', 'value')],
+    [State('universe-graph', 'figure')]
 )
-def show_taken_or_free(value):
-    if value == 'taken':
-        return UNIVERSE_FIGURE.get_taken_planets_fig()
-    if value == 'free':
+def show_taken_or_free(activeOrInactive, takenOrFree, figure):
+    if activeOrInactive == 'active' and takenOrFree == 'taken':
+        return UNIVERSE_FIGURE.get_taken_active_planets_fig()
+    if activeOrInactive == 'inactive' and takenOrFree == 'taken':
+        return UNIVERSE_FIGURE.get_taken_inactive_planets_fig()
+    if activeOrInactive == 'active' and takenOrFree == 'free':
         return UNIVERSE_FIGURE.get_free_planets_fig()
+    if activeOrInactive == 'inactive' and takenOrFree == 'free':
+        return figure
+
+
+@app.callback(
+    Output('universe-data-table-wrapper', 'children'),
+    [Input('universe-active-inactive-toggle', 'value'),
+     Input('universe-taken-free-toggle', 'value')],
+    [State('universe-data-table-wrapper', 'children')]
+)
+def render_data_table(activeOrInactive, takenOrFree, child):
+    if activeOrInactive == 'active' and takenOrFree == 'taken':
+        active = UNIVERSE_FIGURE._get_active_players()
+        query_str = 'player == @active'
+        df_raw = UNIVERSE_FIGURE.universe_data.universe.query(query_str)
+        df_raw.rename(index=str, columns={'name': 'planet_name'}, inplace=True)
+
+        df_player_name = UNIVERSE_FIGURE.universe_data.players.loc[:, ['id', 'name', 'status', 'alliance']]
+        df_player_name.set_index('alliance', inplace=True)
+        df_player_name.rename(index=str, columns={'id': 'player_id', 'name': 'player_name'}, inplace=True)
+
+        allience_names = UNIVERSE_FIGURE.universe_data.alliences.loc[:, ['id', 'name']]
+        allience_names.set_index('id', inplace=True)
+        allience_names.rename(index=str, columns={'name': 'allience_name'}, inplace=True)
+
+        df_player = df_player_name.join(allience_names)
+        df_player.set_index('player_id', inplace=True, drop=True)
+
+        df_eco_score = UNIVERSE_FIGURE.highscore_data.economy.loc[:, ['id', 'score']]
+        df_eco_score.rename(index=str, columns={'id': 'player_id', 'score': 'eco_score'}, inplace=True)
+        df_eco_score.set_index('player_id', inplace=True)
+        df_player_with_score = df_player.join(df_eco_score)
+
+        df_detailed = df_raw.set_index('player').join(df_player_with_score)
+
+        df_viz = UNIVERSE_FIGURE.df.loc[:, ['coords', 'galaxy', 'system', 'planet']]
+        df_viz = df_viz.loc[:, ['coords', 'n']]
+        df_viz.set_index('coords', inplace=True)
+        df = df_detailed.set_index('coords').join(df_viz)
+
+        df.reset_index(inplace=True)
+        df = df[['n', 'coords', 'planet_name', 'player_name', 'status', 'allience_name', 'eco_score']]
+        return html.Div(cast_to_dash_table(df))
+    if activeOrInactive == 'inactive' and takenOrFree == 'taken':
+        inactive = UNIVERSE_FIGURE._get_inactive_players()
+        query_str = 'player == @inactive'
+        df_raw = UNIVERSE_FIGURE.universe_data.universe.query(query_str)
+        df_raw.rename(index=str, columns={'name': 'planet_name'}, inplace=True)
+
+        df_player_name = UNIVERSE_FIGURE.universe_data.players.loc[:, ['id', 'name', 'status', 'alliance']]
+        df_player_name.set_index('alliance', inplace=True)
+        df_player_name.rename(index=str, columns={'id': 'player_id','name': 'player_name'}, inplace=True)
+
+        allience_names = UNIVERSE_FIGURE.universe_data.alliences.loc[:, ['id', 'name']]
+        allience_names.set_index('id', inplace=True)
+        allience_names.rename(index=str, columns={'name': 'allience_name'}, inplace=True)
+
+        df_player = df_player_name.join(allience_names)
+        df_player.set_index('player_id', inplace=True, drop=True)
+
+        df_eco_score = UNIVERSE_FIGURE.highscore_data.economy.loc[:, ['id', 'score']]
+        df_eco_score.rename(index=str, columns={'id': 'player_id', 'score': 'eco_score'}, inplace=True)
+        df_eco_score.set_index('player_id', inplace=True)
+        df_player_with_score = df_player.join(df_eco_score)
+
+        df_detailed = df_raw.set_index('player').join(df_player_with_score)
+
+        df_viz = UNIVERSE_FIGURE.df.loc[:, ['coords', 'galaxy', 'system', 'planet']]
+        df_viz = df_viz.loc[:, ['coords', 'n']]
+        df_viz.set_index('coords', inplace=True)
+        df = df_detailed.set_index('coords').join(df_viz)
+
+        df.reset_index(inplace=True)
+        df = df[['n', 'coords', 'planet_name', 'player_name', 'status', 'allience_name', 'eco_score']]
+        return html.Div(cast_to_dash_table(df))
+    if activeOrInactive == 'active' and takenOrFree == 'free':
+        df = UNIVERSE_FIGURE.get_free_planets_data()
+        return html.Div(cast_to_dash_table(df))
+    if activeOrInactive == 'inactive' and takenOrFree == 'free':
+        df = UNIVERSE_FIGURE.get_free_planets_data()
+        return html.Div(cast_to_dash_table(df))
 
 
 if __name__ == '__main__':

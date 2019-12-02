@@ -7,7 +7,7 @@ low level dictionary object to capture state
 config = {
     'Player': {
         'Planets': [{
-            'Planet': {
+            'Planet': {  # replace by (unique) address
                 'Resources': {
                     'Metal': 0,
                     'Crystal': 0,

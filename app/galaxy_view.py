@@ -106,6 +106,11 @@ class UniverseFigure:
         df['x'] = df['system_degree'].apply(lambda x: math.cos(x))
         df['y'] = df['system_degree'].apply(lambda x: math.sin(x))
         df['r'] = df['planet'].apply(lambda x: self.minimum_distance + self.planet_distance * x)
+        df['n'] = (
+                (df['galaxy'] - 1) * max(self.systems_range) * max(self.planets_range)
+                + (df['system'] - 1) * max(self.planets_range)
+                + df['planet']
+        )
         return df
 
     def get_default_layout(self):

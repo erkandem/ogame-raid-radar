@@ -59,7 +59,7 @@ class UniverseFigure:
     galaxies_range = list(range(1, 10))
     systems_range = list(range(1, 500))
     planets_range = list(range(1, 16))
-    planet_distance = 1 / (15 * 2)
+    planet_increment = 1 / (15 * 2)
     galaxy_increment = (2 * math.pi) / 9
     system_increment = galaxy_increment / 499
     minimum_distance = 1
@@ -105,7 +105,7 @@ class UniverseFigure:
         )
         df['x'] = df['system_degree'].apply(lambda x: math.cos(x))
         df['y'] = df['system_degree'].apply(lambda x: math.sin(x))
-        df['r'] = df['planet'].apply(lambda x: self.minimum_distance + self.planet_distance * x)
+        df['r'] = df['planet'].apply(lambda x: self.minimum_distance + self.planet_increment * x)
         df['n'] = (
                 (df['galaxy'] - 1) * max(self.systems_range) * max(self.planets_range)
                 + (df['system'] - 1) * max(self.planets_range)

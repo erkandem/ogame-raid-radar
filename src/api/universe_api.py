@@ -205,7 +205,7 @@ class UniverseDataApi:
         return result
 
 
-def get_janice():
+def get_janice_universe():
     return UniverseDataApi(universe_id=162, community='en', do_init=True)
 
 

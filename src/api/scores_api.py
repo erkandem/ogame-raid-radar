@@ -5,7 +5,7 @@ import pandas as pd
 
 
 class HighScoreUrls:
-    universe: int
+    universe_id: int
     community: str
     hs_categories = {
         'player': 1,
@@ -22,13 +22,13 @@ class HighScoreUrls:
         'honor': 7
     }
 
-    def __init__ (self, universe: int, community: str):
-        self.universe = universe
+    def __init__ (self, universe_id: int, community: str):
+        self.universe_id = universe_id
         self.community = community
         return
 
     def _get_base_url(self):
-        return f"https://s{self.universe}-{self.community}.ogame.gameforge.com/api/highscore.xml"
+        return f"https://s{self.universe_id}-{self.community}.ogame.gameforge.com/api/highscore.xml"
 
     def __get_scores_url(self, query: dict):
         return f'{self._get_base_url()}?{urlencode(query)}'
@@ -109,8 +109,8 @@ class HighScoreUrls:
         return self._load_data_as_df(url)
 
 
-class HighScoresApi:
-    universe: int
+class HighScoresDataApi:
+    universe_id: int
     community: str
     total: pd.DataFrame
     economy: pd.DataFrame
@@ -122,10 +122,10 @@ class HighScoresApi:
     honor: pd.DataFrame
     urls: HighScoreUrls
 
-    def __init__(self, universe: int, community: str, do_init: bool = False):
-        self.universe = universe
+    def __init__(self, universe_id: int, community: str, do_init: bool = False):
+        self.universe_id = universe_id
         self.community = community
-        self.urls = HighScoreUrls(universe, community)
+        self.urls = HighScoreUrls(universe_id, community)
         self.total = self.urls.get_total_data()
         self.economy = self.urls.get_economy_data()
         self.research = self.urls.get_research_data()
@@ -135,3 +135,7 @@ class HighScoresApi:
         self.military_lost = self.urls.get_military_lost_data()
         self.honor = self.urls.get_honor_data()
         return
+
+
+def get_janice_highscore():
+    return HighScoresDataApi(universe_id=162, community='en', do_init=True)

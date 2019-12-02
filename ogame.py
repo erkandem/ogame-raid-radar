@@ -7,12 +7,12 @@ from properties import moon_buildings_properties, moon_buildings_properties_mapp
 
 
 def initializing_logic(props: dict, prop_to_obj_mapping: dict):
-    init_objects = []
+    init_objects = {}
     for obj_name, obj in prop_to_obj_mapping['objects'].items():
         for property_name, value in props[obj_name].items():
             attribute_name = prop_to_obj_mapping['attributes'][property_name]
             obj.__setattr__(attribute_name, value)
-        init_objects.append(obj)
+        init_objects[obj_name] = obj
     return init_objects
 
 

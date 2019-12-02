@@ -37,11 +37,14 @@ import dash
 from dash.dependencies import Output, Input, State
 import dash_html_components as html
 import dash_core_components as dcc
+import dash_table as dse
 import flask
 import pandas as pd
 import plotly.graph_objects as go
 
-from src.api.universe_api import get_janice, UniverseDataApi
+from src.api.universe_api import get_janice_universe, UniverseDataApi
+from src.api.scores_api import get_janice_highscore, HighScoresDataApi
+
 
 app_tag = 'ONSA - Defending Our Empire. Securing the Future'
 CSS_LIST = ['/static/sakura-earthly.css']

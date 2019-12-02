@@ -64,12 +64,14 @@ class UniverseFigure:
     system_increment = galaxy_increment / 499
     minimum_distance = 1
     universe_data: UniverseDataApi
+    highscore_data: HighScoresDataApi
     figure: go.Figure
     df_dummy: pd.DataFrame
     df: pd.DataFrame
 
     def __init__(self):
-        self.universe_data = get_janice()
+        self.highscore_data = get_janice_highscore()
+        self.universe_data = get_janice_universe()
         self.df_dummy = self.get_dummy_universe_df()
         self.df = self.get_dummy_universe_df()
         self.df = self.insert_universe_data(self.df)

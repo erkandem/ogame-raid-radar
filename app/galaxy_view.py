@@ -268,13 +268,19 @@ def get_initial_app_layout():
         )], className='aptry'
     )
 
+# UNIVERSE_FIGURE = UniverseFigure()
+import pickle
+# with open('cache.pickle', 'wb') as file:
+#     pickle.dump(UNIVERSE_FIGURE, file)
+with open('cache.pickle', 'rb') as file_2:
+    UNIVERSE_FIGURE = pickle.load(file_2)
 
-UNIVERSE_FIGURE = UniverseFigure()
+
 server = flask.Flask(__name__)
 app = dash.Dash(
     __name__,
     server=server,
-    external_stylesheets=CSS_LIST,
+    suppress_callback_exceptions=True
 )
 
 app.layout = get_initial_app_layout()

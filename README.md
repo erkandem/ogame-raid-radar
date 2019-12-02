@@ -17,14 +17,6 @@ My weapon of choice is Python.
 |[alaingilbert/pyogame](https://github.com/alaingilbert/pyogame) | python3, focus on API interaction in-game usage is sanctioned. code parts and ideas of his work are used here |
 |[esp1337/ogame-testing](https://github.com/esp1337/ogame-testing) | python2, undocumented|
 
-## General Design decisions made
-most of the objects available in the game are generic. Also, different servers
-(separated games) run with different configuration values such as the game speed.
-
-As such the code is focused on generating stubs to get features like code auto completion and
-render the final objects during instantiation by passing the final configuration details.
-
-
 
 ## stellar objects
 

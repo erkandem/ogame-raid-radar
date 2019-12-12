@@ -40,3 +40,5 @@ My weapon of choice is Python.
 Supports a mapping between values returned by public API endpoints
 and objects within the game. Thanks to the work of Alain Gilbert (@alain_gilbert) from which 
 the values were taken.
+
+

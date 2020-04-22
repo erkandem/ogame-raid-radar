@@ -516,7 +516,27 @@ def get_initial_app_layout():
                 html.Div([
                     dse.DataTable()
                 ], id='universe-data-table-wrapper')
-            )
+            ),
+            html.Div([
+                dcc.Input(
+                    placeholder='1-499',
+                    type='number',
+                    value=1,
+                    id='universe-range-query-range'
+                ),
+                dcc.Input(
+                    placeholder='2:222:2',
+                    type='text',
+                    value='',
+                    id='universe-range-query-start-coords'
+                ),
+                html.Div(
+                    'output will be rendered aqui',
+                    id='universe-range-query-ouput'
+                ),
+                html.Div('[{}]', id='universe-range-query-intermediate-data', style={'display': 'none'}),
+            ], id='universe-range-query-container'),
+            html.Div(id='universe-data-interactivity-container')
         ])
     ], className='aptry')
 

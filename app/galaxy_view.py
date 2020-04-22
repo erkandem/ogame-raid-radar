@@ -466,6 +466,12 @@ def cast_to_dash_table(df):
         'sort_action': 'native',
         'export_format': 'csv',
         'export_headers': 'display',
+        'row_selectable': 'multi',
+        'row_deletable': True,
+        'selected_columns': [],
+        'selected_rows': [],
+        'page_current': 0,
+        'page_size': 10,
         'style_cell': {
             'minWidth': '40px',
             'maxWidth': '100px',

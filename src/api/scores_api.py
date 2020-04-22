@@ -115,7 +115,7 @@ class HighScoreUrls(ApiBaseClass):
         return df
 
 
-class HighScoresDataApi:
+class HighScoresData:
     universe_id: int
     community: str
     total: pd.DataFrame
@@ -143,4 +143,4 @@ class HighScoresDataApi:
 
 
 def get_janice_highscore():
-    return HighScoresDataApi(universe_id=162, community='en', do_init=True)
+    return HighScoresData(universe_id=162, community='en', do_init=True)

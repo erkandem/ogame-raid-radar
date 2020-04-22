@@ -134,7 +134,7 @@ class UniverseData:
             results = self.universe.query('player == @player_id_str')
             results = results.reset_index(drop=True)
             return results[['coords', 'name']].to_dict(orient='records')
-        except AttributeError():
+        except AttributeError:
             print('Data properties initialized and pd.DataFrame?')
 
     def get_planets_of_player_by_id(self, player_id_str: str) -> dict:

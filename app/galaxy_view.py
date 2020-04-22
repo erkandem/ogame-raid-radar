@@ -439,6 +439,24 @@ class UniverseFigure:
         return self.df.query('taken == 1 and coords in @coords')
 
 
+def get_inactive_player():
+    inactive = UNIVERSE_FIGURE._get_inactive_players()
+    query_str = 'player == @inactive'
+    df_raw = UNIVERSE_FIGURE.universe_data.universe.query(query_str)
+    df_raw.rename(index=str, columns={'name': 'planet_name'}, inplace=True)
+    df = UNIVERSE_FIGURE.get_universe_with_player_deteils(df_raw)
+    return df
+
+
+def get_active_player():
+    active = UNIVERSE_FIGURE._get_inactive_players()
+    query_str = 'player == @active'
+    df_raw = UNIVERSE_FIGURE.universe_data.universe.query(query_str)
+    df_raw.rename(index=str, columns={'name': 'planet_name'}, inplace=True)
+    df = UNIVERSE_FIGURE.get_universe_with_player_deteils(df_raw)
+    return df
+
+
 def cast_to_dash_table(df):
     return dse.DataTable(**{
         'columns': [{'name': col, 'id': col} for col in df.columns],

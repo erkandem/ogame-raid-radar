@@ -1,7 +1,8 @@
 from urllib.parse import urlencode
-import requests
 import xml.etree.ElementTree as ET
+import requests
 import pandas as pd
+from src.api.utils import nowstr
 
 
 class HighScoreUrls:

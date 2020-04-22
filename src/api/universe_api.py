@@ -4,15 +4,16 @@
 Created on Sun Sep 15 18:16:05 2019
 @author: kan
 
+Update frequencies:
 
-players.xml -> daily
-universe.xml -> weekly
-highscore.xml -> hourly
-alliances.xml -> daily
-serverData.xml -> daily
-playerData.xml -> weekly
-localization.xml -> static
-universes.xml -> static
+    players.xml -> daily
+    universe.xml -> weekly
+    highscore.xml -> hourly
+    alliances.xml -> daily
+    serverData.xml -> daily
+    playerData.xml -> weekly
+    localization.xml -> static
+    universes.xml -> static
 
 """
 import json

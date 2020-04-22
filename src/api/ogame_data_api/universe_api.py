@@ -129,13 +129,10 @@ class UniverseData:
         self.missions = game_schema['missions']
 
     def get_planets_of_player(self, player_name: str) -> dict:
-        try:
-            player_id_str = self.get_player_id(player_name)
-            results = self.universe.query('player == @player_id_str')
-            results = results.reset_index(drop=True)
-            return results[['coords', 'name']].to_dict(orient='records')
-        except AttributeError:
-            print('Data properties initialized and pd.DataFrame?')
+        player_id_str = self.get_player_id(player_name)
+        results = self.universe.query('player == @player_id_str')
+        results = results.reset_index(drop=True)
+        return results[['coords', 'name']].to_dict(orient='records')
 
     def get_planets_of_player_by_id(self, player_id_str: str) -> dict:
         results = self.universe.query('player == @player_id_str')

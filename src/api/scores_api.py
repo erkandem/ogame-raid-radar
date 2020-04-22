@@ -79,35 +79,51 @@ class HighScoreUrls:
 
     def get_total_data(self):
         url = self._get_total_url()
-        return self._load_data_as_df(url)
+        df = self._load_data_as_df(url)
+        df['score'] = df['score'].astype(float)
+        return df
 
     def get_economy_data(self):
         url = self._get_economy_url()
-        return self._load_data_as_df(url)
+        df = self._load_data_as_df(url)
+        df['score'] = df['score'].astype(float)
+        return df
 
     def get_research_data(self):
         url = self._get_research_url()
-        return self._load_data_as_df(url)
+        df = self._load_data_as_df(url)
+        df['score'] = df['score'].astype(float)
+        return df
 
     def get_military_data(self):
         url = self._get_military_url()
-        return self._load_data_as_df(url)
+        df = self._load_data_as_df(url)
+        df['score'] = df['score'].astype(float)
+        return df
 
     def get_military_built_data(self):
         url = self._get_military_built_url()
-        return self._load_data_as_df(url)
+        df = self._load_data_as_df(url)
+        df['score'] = df['score'].astype(float)
+        return df
 
     def get_military_destroyed_data(self):
         url = self._get_military_destroyed_url()
-        return self._load_data_as_df(url)
+        df = self._load_data_as_df(url)
+        df['score'] = df['score'].astype(float)
+        return df
 
     def get_military_lost_data(self):
         url = self._get_military_lost_url()
-        return self._load_data_as_df(url)
+        df = self._load_data_as_df(url)
+        df['score'] = df['score'].astype(float)
+        return df
 
     def get_honor_data(self):
         url = self._get_honor_url()
-        return self._load_data_as_df(url)
+        df = self._load_data_as_df(url)
+        df['score'] = df['score'].astype(float)
+        return df
 
 
 class HighScoresDataApi:

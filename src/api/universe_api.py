@@ -206,7 +206,7 @@ class UniverseDataApi:
         coords = self.get_planets_of_allience(allience_tag)
         return {galaxy: sum([elm[0] == galaxy for elm in coords]) for galaxy in galaxy_list}
 
-    def is_planet_taken(self, coords_str: str):
+    def is_planet_taken(self, coords_str: str) -> bool:
         if coords_str in self.universe_coords_list:
             result = True
         else:

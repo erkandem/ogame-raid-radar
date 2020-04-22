@@ -215,7 +215,7 @@ class UniverseDataApi:
 
 
 def get_janice_universe():
-    return UniverseDataApi(universe_id=162, community='en', do_init=True)
+    return UniverseDataApi(universe_id=162, community='en')
 
 
 if __name__ == '__main__':

@@ -550,7 +550,7 @@ import pickle
 with open('cache.pickle', 'rb') as file_2:
     UNIVERSE_FIGURE = pickle.load(file_2)
 
-
+COORDINATES_DF = UniverseFigure.generate_coordinates_df()
 server = flask.Flask(__name__)
 app = dash.Dash(
     __name__,

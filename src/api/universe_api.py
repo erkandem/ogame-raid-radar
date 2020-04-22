@@ -60,7 +60,7 @@ class UniverseDataUrls(ApiBaseClass):
         return f"{self._get_base_url()}/localization.xml"
 
     def _get_playerdata_url(self, player_id: int):
-        query = {'id': id}
+        query = {'id': player_id}
         return f'{self._get_base_url()}/playerData.xml?{urlencode(query)}'
 
     def load_server_data(self):

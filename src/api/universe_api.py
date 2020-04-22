@@ -22,7 +22,7 @@ import pandas as pd
 import requests
 import xmltodict
 from urllib.parse import urlencode
-from src.api.utils import nowstr
+from src.api.utils import ApiBaseClass
 
 
 class Universes:
@@ -36,7 +36,7 @@ class Universes:
         return json.loads(json_str)
 
 
-class UniverseDataUrls:
+class UniverseDataUrls(ApiBaseClass):
     def __init__(self, universe: int, community: str):
         self.universe = universe
         self.community = community
@@ -62,16 +62,6 @@ class UniverseDataUrls:
     def _get_playerdata_url(self, player_id: int):
         query = {'id': id}
         return f'{self._get_base_url()}/playerData.xml?{urlencode(query)}'
-
-    def _load_data(self, url: str):
-        response = requests.get(url)
-        xml_string = response.content.decode('utf-8')
-        root = ET.fromstring(xml_string)
-        return [elm.attrib for elm in root]
-
-    def _load_data_as_df(self, url):
-        data = self._load_data(url)
-        return pd.DataFrame(data)
 
     def load_server_data(self):
         url = self._get_serverdata_url()

@@ -2,10 +2,10 @@ from urllib.parse import urlencode
 import xml.etree.ElementTree as ET
 import requests
 import pandas as pd
-from src.api.utils import nowstr
+from src.api.utils import ApiBaseClass
 
 
-class HighScoreUrls:
+class HighScoreUrls(ApiBaseClass):
     universe_id: int
     community: str
     hs_categories = {
@@ -65,17 +65,6 @@ class HighScoreUrls:
     def _get_honor_url(self):
         query = {'category': 1, 'type': 7}
         return f'{self._get_base_url()}?{urlencode(query)}'
-
-    def _load_data(self, url):
-        """['id', 'name', 'status', 'alliance']"""
-        response = requests.get(url)
-        xml_string = response.content.decode('utf-8')
-        root = ET.fromstring(xml_string)
-        return [elm.attrib for elm in root]
-
-    def _load_data_as_df(self, url):
-        data = self._load_data(url)
-        return pd.DataFrame(data)
 
     def get_total_data(self):
         url = self._get_total_url()

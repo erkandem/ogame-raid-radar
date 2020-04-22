@@ -462,7 +462,6 @@ def cast_to_dash_table(df):
         'id': 'universe-data-table',
         'columns': [{'name': col, 'id': col} for col in df.columns],
         'data': df.to_dict('records'),
-        'id': 'universe-data-table',
         'filter_action': 'native',
         'sort_action': 'native',
         'export_format': 'csv',

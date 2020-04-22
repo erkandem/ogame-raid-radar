@@ -24,10 +24,10 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 
-from src.api.ogame_data_api.universe_api import get_janice_universe
-from src.api.ogame_data_api.universe_api import UniverseData
-from src.api.ogame_data_api.scores_api import get_janice_highscore
-from src.api.ogame_data_api.scores_api import HighScoresData
+from src.api.ogame_stats.universe_api import get_janice_universe
+from src.api.ogame_stats.universe_api import UniverseData
+from src.api.ogame_stats.scores_api import get_janice_highscore
+from src.api.ogame_stats.scores_api import HighScoresData
 from src.utils import calc_distance
 from src.utils import calc_flight_time
 from src.planet import Location

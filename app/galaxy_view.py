@@ -1,33 +1,11 @@
 """
-
-Basic Data Table functionality works but
-the data like x, y and r are irelevant
-
-More useful would be actionable data like:
- - player name
- - ranking
- - planet name
-
-
-from collections import namedtuple
-Condition = namedtuple('Condition', ['column', 'operator', 'variable'])
-ConditionGroup = namedtuple('ConditionGroup', ['c1', 'conj', 'c2'])
-Query = [Condition]
-Query2 = [ConditionGroup(c1=Condition, conj='and', c2=Condition)]
-
-Query2[0].c1, Query2[0].c2
-def render_condition(c: Condition):
-    return f'{c[0]} {c[1]} {c[3]}'
-
-
-def render_condition_group(cg: ConditionGroup):
-    if type(cg.c1):
-
-    return f'{render_condition(cg.c1)} {cg.conj} {render_condition(cg.c2)}'
-
-c = Condition(column='planet', operator='==', variable='@planet_slot')
-query = [c, 'conjunction' ]
-render_query
+todo:
+ - fix overflow from one 9:499:15 to 1:1:1
+ - automate rendering after coordinates and range is entered by user
+ - system specific range units (currently planets)
+   - 1 galaxy
+   - within 50 solar systems
+   - within the next 60 planets
 
 """
 from datetime import datetime as dt

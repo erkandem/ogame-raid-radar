@@ -20,6 +20,12 @@ class TestHighScoresUrls:
         result = hs._get_scores_url({'somethig': 'special'})
         assert result == expected
 
+    def test__get_total_url(self):
+        hs = HighScoreUrls(self.universe_id, self.community)
+        expected = hs._get_base_url() + '?category=1&type=0'
+        result = hs._get_total_url()
+        assert result == expected
+
     def test__get_economy_url(self):
         hs = HighScoreUrls(self.universe_id, self.community)
         expected = hs._get_base_url() + '?category=1&type=1'
@@ -28,7 +34,7 @@ class TestHighScoresUrls:
 
     def test__get_research_url(self):
         hs = HighScoreUrls(self.universe_id, self.community)
-        expected = hs._get_base_url() + '?category=1&type=1'
+        expected = hs._get_base_url() + '?category=1&type=2'
         result = hs._get_research_url()
         assert result == expected
 
@@ -59,5 +65,5 @@ class TestHighScoresUrls:
     def test__get_honor_url(self):
         hs = HighScoreUrls(self.universe_id, self.community)
         expected = hs._get_base_url() + '?category=1&type=7'
-        result = hs._get_military_lost_url()
+        result = hs._get_honor_url()
         assert result == expected

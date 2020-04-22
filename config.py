@@ -1,7 +1,10 @@
 """
 taken from work done by [alaingilbert](https://github.com/alaingilbert/pyogame)
-low level dictionary object to capture state
+low level dictionary object to capture the state of the account if one player
+for a single universe.
+`key`: `value` represents the level(`value`) of a single building/tech (`key`)
 
+might change to class structure.
 """
 
 config = {

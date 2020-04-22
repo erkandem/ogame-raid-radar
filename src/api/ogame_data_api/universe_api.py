@@ -133,7 +133,10 @@ class UniverseData:
         return json.dumps(results, indent=2)
 
     def get_player_id(self, player_name: str) -> str:
-        return str(self.players.query('name == @player_name').iloc[0]['id'])
+        try:
+            return str(self.players.query('name == @player_name').iloc[0]['id'])
+        except IndexError:
+            print(f"`{player_name}` not found. look at `players['name']` for valid player names")
 
     def get_player_status(self, player_name: str) -> str:
         """['a', nan, 'vi', 'v', 'I', 'vIb', 'vb', 'vI', 'i', 'o', 'vib', 'vo']"""

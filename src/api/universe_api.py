@@ -68,6 +68,10 @@ class UniverseDataUrls:
         root = ET.fromstring(xml_string)
         return [elm.attrib for elm in root]
 
+    def _load_data_as_df(self, url):
+        data = self._load_data(url)
+        return pd.DataFrame(data)
+
     def load_server_data(self):
         url = self._get_serverdata_url()
         response = requests.get(url)
@@ -78,17 +82,17 @@ class UniverseDataUrls:
     def load_players_data(self):
         """['id', 'name', 'status', 'alliance']"""
         url = self._get_players_url()
-        return pd.DataFrame(self._load_data(url))
+        return self._load_data_as_df(url)
 
     def load_universe_data(self):
         """['id', 'player', 'name', 'coords']"""
         url = self._get_universe_url()
-        return pd.DataFrame(self._load_data(url))
+        return self._load_data_as_df(url)
 
     def load_alliances_data(self):
         """['foundDate', 'founder', 'homepage', 'id', 'logo', 'name', 'open', 'tag']"""
         url = self._get_alliences_url()
-        return pd.DataFrame(self._load_data(url))
+        return self._load_data_as_df(url)
 
     def load_game_schema(self):
         """{'techs': {'1': 'Metal Mine'}, 'missions': {'1': 'Attack'}"""

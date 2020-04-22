@@ -541,7 +541,7 @@ def get_initial_app_layout():
     ], className='aptry')
 
 
-dbug = '''
+debug = '''
 UNIVERSE_FIGURE = UniverseFigure()
 import pickle
 with open('cache.pickle', 'wb') as file:

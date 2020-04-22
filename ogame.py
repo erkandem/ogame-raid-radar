@@ -7,6 +7,9 @@ from properties import moon_buildings_properties, moon_buildings_properties_mapp
 
 
 def initializing_logic(props: dict, prop_to_obj_mapping: dict):
+    """
+    a tool to avoid hard coding object properties
+    """
     init_objects = {}
     for obj_name, obj in prop_to_obj_mapping['objects'].items():
         for property_name, value in props[obj_name].items():

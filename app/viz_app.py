@@ -1,5 +1,12 @@
-from src.api.ogame_stats.scores_api import HighScoresData
-from src.api.ogame_stats.universe_api import get_janice_universe
+from src import HighScoresData
+from src import UniverseData
+
+
+def get_janice_highscore():
+    return HighScoresData(universe_id=162, community='en', do_init=True)
+
+def get_janice_universe():
+    return UniverseData(universe_id=162, community='en')
 
 
 def sth_completly_different():

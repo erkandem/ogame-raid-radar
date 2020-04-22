@@ -24,14 +24,20 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 
-from src.api.ogame_stats.universe_api import get_janice_universe
-from src.api.ogame_stats.universe_api import UniverseData
-from src.api.ogame_stats.scores_api import get_janice_highscore
-from src.api.ogame_stats.scores_api import HighScoresData
+from src import UniverseData
+from src import HighScoresData
 from src.utils import calc_distance
 from src.utils import calc_flight_time
 from src.planet import Location
 from src.planet import Coords
+
+
+def get_janice_highscore():
+    return HighScoresData(universe_id=162, community='en', do_init=True)
+
+
+def get_janice_universe():
+    return UniverseData(universe_id=162, community='en')
 
 
 app_tag = 'ONSA - Defending Our Empire. Securing the Future'

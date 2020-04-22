@@ -183,7 +183,7 @@ class UniverseData:
         members = self.players.query('alliance == @allience_id')
         return members
 
-    def get_planets_of_allience(self, tag: str) -> [str]:
+    def get_planets_of_alliance(self, tag: str) -> [str]:
         members = self.get_players_of_allience(tag)
         member_ids = members['id'].to_list()
         data = [self.get_planets_of_player_by_id(player_id) for player_id in member_ids]
@@ -193,7 +193,7 @@ class UniverseData:
 
     def get_planets_distribution_by_galaxy(self, allience_tag: str) -> dict:
         galaxy_list = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
-        coords = self.get_planets_of_allience(allience_tag)
+        coords = self.get_planets_of_alliance(allience_tag)
         return {galaxy: sum([elm[0] == galaxy for elm in coords]) for galaxy in galaxy_list}
 
     def is_planet_taken(self, coords_str: str) -> bool:

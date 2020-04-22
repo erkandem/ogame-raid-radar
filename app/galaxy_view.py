@@ -245,22 +245,53 @@ class UniverseFigure:
         df = pd.DataFrame(universe)
         return df
 
-    def insert_universe_data(self, df):
-        shift_to_yaxis = math.pi / 2
-        df['taken'] = df['coords'].apply(lambda x: int(self.universe_data.is_planet_taken(x)))
+    @staticmethod
+    def generate_coordinates_df():
+        all_coordinates = [{
+            'galaxy': galaxy,
+            'system': system,
+            'planet': planet,
+            'coords': f'{galaxy}:{system}:{planet}',
+        }
+            for galaxy in UniverseFigure.galaxies_range
+            for system in UniverseFigure.systems_range
+            for planet in UniverseFigure.planets_range
+        ]
+        df = pd.DataFrame(all_coordinates)
+        df = UniverseFigure.calculate_linear_coordinate_df(df)
+        return df
+
+    def calculate_radius(self, x):
+        return self.minimum_distance + self.planet_increment * x
+
+    def get_ogame_coordinate(self, lin_coord: int):
+        coords = self.coordinates_df.query('n = @lin_coord').to_dict()
+        return coords
+
+    @staticmethod
+    def calculate_linear_coordinate_df(df):
+        df['n'] = (
+                (df['galaxy'] - 1) * max(UniverseFigure.systems_range) * max(UniverseFigure.planets_range)
+                + (df['system'] - 1) * max(UniverseFigure.planets_range)
+                + df['planet']
+        )
+        return df
+
+    def calculate_system_degree_df(self, df):
         df['system_degree'] = (
                 (df['galaxy'] - 1) * self.galaxy_increment
                 + (df['system'] - 1) * self.system_increment
-                + shift_to_yaxis
+                + self.shift_to_yaxis
         )
+        return df
+
+    def insert_universe_data(self, df):
+        df['taken'] = df['coords'].apply(lambda x: int(self.universe_data.is_planet_taken(x)))
+        df = self.calculate_system_degree_df(df)
         df['x'] = df['system_degree'].apply(lambda x: math.cos(x))
         df['y'] = df['system_degree'].apply(lambda x: math.sin(x))
-        df['r'] = df['planet'].apply(lambda x: self.minimum_distance + self.planet_increment * x)
-        df['n'] = (
-                (df['galaxy'] - 1) * max(self.systems_range) * max(self.planets_range)
-                + (df['system'] - 1) * max(self.planets_range)
-                + df['planet']
-        )
+        df['r'] = df['planet'].apply(lambda x: self.calculate_radius(x))
+        df = self.calculate_linear_coordinate_df(df)
         return df
 
     def _get_default_layout(self):

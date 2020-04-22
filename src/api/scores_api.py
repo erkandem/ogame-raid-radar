@@ -23,10 +23,9 @@ class HighScoreUrls:
         'honor': 7
     }
 
-    def __init__ (self, universe_id: int, community: str):
+    def __init__(self, universe_id: int, community: str):
         self.universe_id = universe_id
         self.community = community
-        return
 
     def _get_base_url(self):
         return f"https://s{self.universe_id}-{self.community}.ogame.gameforge.com/api/highscore.xml"

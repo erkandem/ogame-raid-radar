@@ -2,7 +2,7 @@ from urllib.parse import urlencode
 import xml.etree.ElementTree as ET
 import requests
 import pandas as pd
-from src.api.utils import ApiBaseClass
+from .utils import ApiBaseClass
 
 
 class HighScoreUrls(ApiBaseClass):

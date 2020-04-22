@@ -22,7 +22,7 @@ import pandas as pd
 import requests
 import xmltodict
 from urllib.parse import urlencode
-from src.api.utils import ApiBaseClass
+from .utils import ApiBaseClass
 
 
 class Universes:

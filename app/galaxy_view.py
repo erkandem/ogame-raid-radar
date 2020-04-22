@@ -365,7 +365,8 @@ class UniverseFigure:
         df_viz.set_index('coords', inplace=True)
         df = df_detailed.set_index('coords').join(df_viz)
         df.reset_index(inplace=True)
-        df = df[['n', 'x', 'y', 'r', 'galaxy', 'system', 'planet', 'taken', 'coords', 'planet_name', 'player_name', 'status', 'allience_name', 'eco_score']]
+        df['n2'] = df['n']  # introduce possible second filter rule
+        df = df[['n', 'n2', 'x', 'y', 'r', 'galaxy', 'system', 'planet', 'taken', 'coords', 'planet_name', 'player_name', 'status', 'allience_name', 'eco_score']]
         return df
 
     def get_dummy_planets_fig(self):

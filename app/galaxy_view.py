@@ -23,9 +23,15 @@ import flask
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
-import dash_table.Format
-from src.api.universe_api import get_janice_universe, UniverseDataApi
-from src.api.scores_api import get_janice_highscore, HighScoresDataApi
+
+from src.api.universe_api import get_janice_universe
+from src.api.universe_api import UniverseData
+from src.api.scores_api import get_janice_highscore
+from src.api.scores_api import HighScoresData
+from src.utils import calc_distance
+from src.utils import calc_flight_time
+from src.planet import Location
+from src.planet import Coords
 
 
 app_tag = 'ONSA - Defending Our Empire. Securing the Future'
@@ -45,11 +51,13 @@ class UniverseFigure:
     galaxy_increment = (2 * math.pi) / 9
     system_increment = galaxy_increment / 499
     minimum_distance = 1
-    universe_data: UniverseDataApi
-    highscore_data: HighScoresDataApi
+    shift_to_yaxis = math.pi / 2
+    universe_data: UniverseData
+    highscore_data: HighScoresData
     figure: go.Figure
     df_dummy: pd.DataFrame
     df: pd.DataFrame
+    coordinates_df: pd.DataFrame
 
     def __init__(self):
         self.highscore_data = get_janice_highscore()

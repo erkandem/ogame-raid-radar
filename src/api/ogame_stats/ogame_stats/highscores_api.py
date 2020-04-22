@@ -1,6 +1,4 @@
 from urllib.parse import urlencode
-import xml.etree.ElementTree as ET
-import requests
 import pandas as pd
 from .utils import ApiBaseClass
 

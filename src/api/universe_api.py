@@ -22,6 +22,7 @@ import pandas as pd
 import requests
 import xmltodict
 from urllib.parse import urlencode
+from src.api.utils import nowstr
 
 
 class Universes:
@@ -119,20 +120,23 @@ class UniverseDataApi:
     community: str = None
     urls: UniverseDataUrls = None
 
-    def __init__(self, universe_id: int, community: str, do_init: bool = False):
-        if do_init:
-
-            self.universe_id = universe_id
-            self.community = community
-            self.urls = UniverseDataUrls(universe_id, community)
-            self.players = self.urls.load_players_data()
-            self.universe = self.urls.load_universe_data()
-            self.universe_coords_list = self.universe['coords'].to_list()
-            self.alliences = self.urls.load_alliances_data()
-            self.serverdata = self.urls.load_server_data()
-            game_schema = self.urls.load_game_schema()
-            self.techs = game_schema['techs']
-            self.missions = game_schema['missions']
+    def __init__(self, universe_id: int, community: str):
+        """
+        Args:
+            universe_id (int): an integer identifying the universe (e.g. 162 - Janice)
+            community (str):  an string indicating (language) community='en'
+        """
+        self.universe_id = universe_id
+        self.community = community
+        self.urls = UniverseDataUrls(universe_id, community)
+        self.players = self.urls.load_players_data()
+        self.universe = self.urls.load_universe_data()
+        self.universe_coords_list = self.universe['coords'].to_list()
+        self.alliences = self.urls.load_alliances_data()
+        self.serverdata = self.urls.load_server_data()
+        game_schema = self.urls.load_game_schema()
+        self.techs = game_schema['techs']
+        self.missions = game_schema['missions']
 
     def get_planets_of_player(self, player_name: str) -> dict:
         try:

@@ -191,8 +191,3 @@ class UniverseData:
         else:
             result = False
         return result
-
-
-def get_janice_universe():
-    return UniverseData(universe_id=162, community='en')
-

@@ -11,9 +11,11 @@ Coords = namedtuple(
 class StellarObject:
     pass
 
+
 class Location:
     coords: Coords
     object: StellarObject
+
 
 class Universe:
     galaxies: {}
@@ -51,7 +53,14 @@ class Planet(StellarObject):
     defence: {}
     moon: Moon
 
-    def __init__(self, galaxy: int, system: int, planet: int, *args, **kwargs):
+    def __init__(
+            self,
+            galaxy: int,
+            system: int,
+            planet: int,
+            *args,
+            **kwargs
+    ):
         self.coords = Coords(galaxy, system, planet)
         self.__dict__.update(kwargs)
 

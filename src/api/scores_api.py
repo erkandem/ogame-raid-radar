@@ -34,6 +34,7 @@ class HighScoreUrls:
         return f'{self._get_base_url()}?{urlencode(query)}'
 
     def _get_total_url(self):
+        """ position: str, id: str, score: str"""
         query = {'category': 1, 'type': 0}
         return f'{self._get_base_url()}?{urlencode(query)}'
 

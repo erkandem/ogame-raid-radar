@@ -42,7 +42,166 @@ def nowstr():
     return dt.now().strftime('%Y%m%d %H:%M:%S.%f')
 
 
-#%%
+def search_area_donut(lower_phi=None, upper_phi=None, shift_to_yaxis=None) -> [go.Pie]:
+    if not lower_phi:
+        lower_phi = math.pi / 4
+    if not upper_phi:
+        upper_phi = math.pi / 4 + math.pi / 4
+    if not shift_to_yaxis:
+        shift_to_yaxis = math.pi / 2
+    search_area = upper_phi - lower_phi
+    rad = 360 / (2 * math.pi)
+    remainder = 2 * math.pi - search_area
+    donut = go.Pie({
+        'rotation': rad * (search_area + lower_phi - shift_to_yaxis),
+        'values': [search_area, remainder],
+        'textinfo': 'none',
+        'hole': .9,
+        'marker': {
+            'colors': ['rgba(173,255,47,.3)', 'rgba(0,0,0,0.1)']
+        },
+        'showlegend': False,
+        'name': 'search_area_donut',
+        'hoverinfo': 'none',
+
+    })
+    return donut
+
+
+def validate_coords(coords):
+    """
+    validate each part of the user defined coordinate.
+    assumes a universe with
+     - 9 galaxies, with
+     - 499 solar systems, with
+     - 15 planets
+    """
+    if 1 < coords['galaxy'] > 9:
+        return {}
+    if 1 < coords['system'] > 499:
+        return {}
+    if 1 < coords['planet'] > 15:
+        return {}
+    return coords
+
+
+def validate_user_coords(coords: str):
+    """a regex utility to validate user input to sth numerical"""
+    result = re.findall(
+        r'^([1-9]{1})'  # galaxy
+        r':([1-9]{1,3})'  # system
+        r':([1-9]{1,2})$',  # planet
+        coords
+    )
+    if len(result) != 1:
+        return {}
+    coords = {'galaxy': int(result[0][0]),  'system': int(result[0][1]), 'planet': int(result[0][2])}
+    coords = validate_coords(coords)
+    return coords
+
+
+def _get_ogame_coordinate(lin_coord: int):
+    coords = COORDINATES_DF.query('n == @lin_coord')
+    coords = coords.to_dict(orient='records')
+    coords = coords[0]
+    return coords
+
+
+def calculate_limits_linear(user_coords: {}, user_range: int) -> {}:
+    if 1 < user_range > 15*499:
+        raise NotImplementedError
+    coords_linear = calculate_linear_coordinate(user_coords)
+    return {
+        'lower': coords_linear - user_range,
+        'upper': coords_linear + user_range
+    }
+
+
+def calculate_limits_coord(user_coords: {}, user_range: int) -> {}:
+    if 1 < user_range > 15*499:
+        raise NotImplementedError
+    coords_linear = calculate_linear_coordinate(user_coords)
+    return {
+        'lower':  _get_ogame_coordinate(coords_linear - user_range),
+        'upper':  _get_ogame_coordinate(coords_linear + user_range)
+    }
+
+
+def validate_user_range(user_range):
+    if 1 < user_range > 15*499:
+        return None
+    return user_range
+
+
+def calculate_linear_coordinate(coords: {}) -> int:
+    """todo find out what it does"""
+    value = (
+        (coords['galaxy'] - 1) * 499 * 15
+        + (coords['system'] - 1) * 15
+        + coords['planet']
+    )
+    return int(value)
+
+
+def calculate_radius(
+        planet_slot: Union[int, float],
+        *,
+        minimum_distance: Union[int, float] = None,
+        planet_increment: Union[int, float] = None
+):
+    """
+    Plotting utility. Returns the the `radius` representing the distance
+    of the planet form the center of the universe.
+    All planets with the same slot in each solar system are modelled to
+    have the same `radius`
+
+    The values `minimum_distance` and `planet_increment` are empirical.
+
+    Args:
+        planet_slot (int, float):
+        minimum_distance (int, float): the minimum distance every planet should have from the center of the universe
+        planet_increment (int, float): distance between each planet slot
+    """
+    if minimum_distance is None:
+        minimum_distance = 1.0
+    if planet_increment is None:
+        planet_increment = 1 / (15 * 2)
+    return minimum_distance + planet_increment * planet_slot
+
+
+def calculate_system_degree(
+        coords: {},
+        *,
+        galaxy_increment: float = None,
+        system_increment: float = None,
+        shift_to_yaxis: float = None
+) -> Union[float, pd.DataFrame]:
+    """
+    assumes the universe is modelled clock like in a circle where each
+    system corresponds to the minutes/seconds/hours expressed in a degree
+    between 0 and 2 * pi.
+
+    Args:
+        coords (dict, df): dict like with keys `galaxy` (int, float) and `system` (int, float)
+        galaxy_increment (float):
+        system_increment (float):
+        shift_to_yaxis (float):
+
+    """
+    if galaxy_increment is None:
+        galaxy_increment = (2 * math.pi) / 9
+    if system_increment is None:
+        system_increment = galaxy_increment / 499
+    if shift_to_yaxis is None:
+        shift_to_yaxis = math.pi / 2
+    system_degree = (
+            (coords['galaxy'] - 1) * galaxy_increment
+            + (coords['system'] - 1) * system_increment
+            + shift_to_yaxis
+    )
+    return system_degree
+
+
 class UniverseFigure:
     galaxies_range = list(range(1, 10))
     systems_range = list(range(1, 500))
@@ -65,6 +224,7 @@ class UniverseFigure:
         self.df_dummy = self.get_dummy_universe_df()
         self.df = self.get_dummy_universe_df()
         self.df = self.insert_universe_data(self.df)
+        self.coordinates_df = self.generate_coordinates_df()
 
     def get_dummy_universe_df(self):
         universe = [{

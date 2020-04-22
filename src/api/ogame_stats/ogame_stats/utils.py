@@ -17,4 +17,4 @@ class ApiBaseClass:
 
 
 def nowstr():
-    return dt.now().strftime('%Y%m%d %H:%M:%S.%f')
+    return dt.now().strftime('%Y%m%d_%H%M%S_%f')

@@ -596,18 +596,10 @@ def show_taken_or_free(activeOrInactive, takenOrFree, figure):
 )
 def render_data_table(activeOrInactive, takenOrFree, child):
     if activeOrInactive == 'active' and takenOrFree == 'taken':
-        active = UNIVERSE_FIGURE._get_active_players()
-        query_str = 'player == @active'
-        df_raw = UNIVERSE_FIGURE.universe_data.universe.query(query_str)
-        df_raw.rename(index=str, columns={'name': 'planet_name'}, inplace=True)
-        df = UNIVERSE_FIGURE.get_universe_with_player_deteils(df_raw)
+        df = get_active_player()
         return html.Div(cast_to_dash_table(df))
     if activeOrInactive == 'inactive' and takenOrFree == 'taken':
-        inactive = UNIVERSE_FIGURE._get_inactive_players()
-        query_str = 'player == @inactive'
-        df_raw = UNIVERSE_FIGURE.universe_data.universe.query(query_str)
-        df_raw.rename(index=str, columns={'name': 'planet_name'}, inplace=True)
-        df = UNIVERSE_FIGURE.get_universe_with_player_deteils(df_raw)
+        df = get_inactive_player()
         return html.Div(cast_to_dash_table(df))
     if activeOrInactive == 'active' and takenOrFree == 'free':
         df = UNIVERSE_FIGURE.get_free_planets_data()

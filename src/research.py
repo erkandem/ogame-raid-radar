@@ -3,6 +3,10 @@ from math import floor, ceil
 
 
 class ResearchField:
+    """
+    base Class to derive specific research areas from.
+    Used to unify methods
+    """
     base_cost: OrePrice
     level: int
     ogame_api_code: int
@@ -83,6 +87,10 @@ class Astrophysics(ResearchField):
 
 
 class Drive(ResearchField):
+    """
+    Drive Research fields share some unique attributes.
+    Other drives are derived from this base class
+    """
     def __init__(self, drive_level, drive_multiplier):
         self.drive_level = drive_level
         self.drive_multiplier = drive_multiplier
@@ -107,6 +115,11 @@ class HyperspaceDrive(Drive):
 
 
 class PlasmasTechAdjustment:
+    """
+    the plasma technology level effect the produced amount of
+    resources. This class provides the methods to get the
+    factor with which the base production can be multiplied.
+    """
 
     def __init__(self, level: int = 0):
         self.level = level

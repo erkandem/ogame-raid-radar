@@ -151,7 +151,6 @@ class HighScoresDataApi:
         self.military_destroyed = self.urls.get_military_destroyed_data()
         self.military_lost = self.urls.get_military_lost_data()
         self.honor = self.urls.get_honor_data()
-        return
 
 
 def get_janice_highscore():

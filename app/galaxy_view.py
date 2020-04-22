@@ -459,6 +459,7 @@ def get_active_player():
 
 def cast_to_dash_table(df):
     return dse.DataTable(**{
+        'id': 'universe-data-table',
         'columns': [{'name': col, 'id': col} for col in df.columns],
         'data': df.to_dict('records'),
         'id': 'universe-data-table',

@@ -27,7 +27,7 @@ config = {
                     'DeuteriumTank': 0,
                     'ShieldedMetalDen': 0,
                     'UndergroundCrystalDen': 0,
-                    'SeabedDeuteriumDen': 0
+                    'SeabedDeuteriumDen': 0,
                 },
                 'Facilities': {
                     'AllianceDepot': 0,
@@ -37,7 +37,7 @@ config = {
                     'MissileSilo': 0,
                     'NaniteFactory': 0,
                     'Terraformer': 0,
-                    'SpaceDock': 0
+                    'SpaceDock': 0,
                 },
                 'Defence': {
                     'RocketLauncher': 0,
@@ -49,7 +49,7 @@ config = {
                     'SmallShieldDome': 0,
                     'LargeShieldDome': 0,
                     'AntiBallisticMissiles': 0,
-                    'InterplanetaryMissiles': 0
+                    'InterplanetaryMissiles': 0,
                 },
                 'Ships': {
                     'SmallCargo': 0,
@@ -65,7 +65,7 @@ config = {
                     'SolarSatellite': 0,
                     'Destroyer': 0,
                     'Deathstar': 0,
-                    'Battlecruiser': 0
+                    'Battlecruiser': 0,
                 }
             }
         }],

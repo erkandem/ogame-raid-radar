@@ -1,5 +1,3 @@
-
-
 class Facility:
     pass
 

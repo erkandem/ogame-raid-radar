@@ -1,5 +1,5 @@
-from src.api.scores_api import HighScoresData
-from src.api.universe_api import get_janice_universe
+from src.api.ogame_data_api.scores_api import HighScoresData
+from src.api.ogame_data_api.universe_api import get_janice_universe
 
 
 def sth_completly_different():

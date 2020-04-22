@@ -99,7 +99,7 @@ class UniverseDataUrls(ApiBaseClass):
         }
 
 
-class UniverseDataApi:
+class UniverseData:
     players: pd.DataFrame = None
     universe: pd.DataFrame = None
     alliences: pd.DataFrame = None
@@ -205,5 +205,5 @@ class UniverseDataApi:
 
 
 def get_janice_universe():
-    return UniverseDataApi(universe_id=162, community='en')
+    return UniverseData(universe_id=162, community='en')
 

@@ -30,7 +30,7 @@ class HighScoreUrls(ApiBaseClass):
     def _get_base_url(self):
         return f"https://s{self.universe_id}-{self.community}.ogame.gameforge.com/api/highscore.xml"
 
-    def __get_scores_url(self, query: dict):
+    def _get_scores_url(self, query: dict):
         return f'{self._get_base_url()}?{urlencode(query)}'
 
     def _get_total_url(self):

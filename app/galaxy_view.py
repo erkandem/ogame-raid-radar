@@ -609,5 +609,122 @@ def render_data_table(activeOrInactive, takenOrFree, child):
         return html.Div(cast_to_dash_table(df))
 
 
+@app.callback(
+    Output('universe-data-interactivity-container', 'children'),
+    [Input('universe-data-table', 'derived_virtual_data'),
+     Input('universe-data-table', 'derived_virtual_selected_rows')],
+    [State('universe-active-inactive-toggle', 'value'),
+     State('universe-taken-free-toggle', 'value'),
+     State('universe-data-interactivity-container', 'children')]
+)
+def update_graphs(rows, derived_virtual_selected_rows, activeOrInactive, takenOrFree, container_child):
+    """
+    What does it do? document immidiatly
+
+        rows:
+        derived_virtual_selected_rows:
+        activeOrInactive:
+        takenOrFree:
+    """
+    if derived_virtual_selected_rows is None:
+        derived_virtual_selected_rows = []
+    if len(rows) == 0:
+        return container_child
+    dff = pd.DataFrame(rows)
+    fig = UNIVERSE_FIGURE._get_figure(dff)
+    return dcc.Graph(
+        figure=fig,
+        config={},
+        id='universe-data-custom-graph'
+    )
+
+
+@app.callback(
+    Output('universe-range-query-intermediate-data', 'children'),
+    [Input('universe-range-query-start-coords', 'value'),
+     Input('universe-range-query-range', 'value')]
+)
+def aggregate_data_processing(user_coords, user_range):
+    """
+    dangerous - using an invisible dict to store data in the clients browser
+    """
+    user_coords = validate_user_coords(user_coords)
+    if len(list(user_coords)) == 0:
+        return json.dumps([{'error_msg': 'invalid coordinates'}])
+    user_range = validate_user_range(user_range)
+    if user_range is None:
+        return json.dumps([{'error_msg': 'invalid range'}])
+    limits = calculate_limits_coord(user_coords, user_range)
+    if len(list(limits)) == 0:
+        return json.dumps([{'error_msg': 'server error'}])
+    data = [{
+        'plotable_limits': {
+            'user': {'phi': calculate_system_degree(user_coords),
+                     'radius': calculate_radius(user_coords['planet'])},
+            'lower': {'phi': calculate_system_degree(limits['lower']), 'radius': calculate_radius(limits['lower']['planet'])},
+            'upper': {'phi': calculate_system_degree(limits['upper']), 'radius': calculate_radius(limits['upper']['planet'])}
+        },
+        'query_limits': {
+            'lower': calculate_linear_coordinate(limits['lower']),
+            'upper': calculate_linear_coordinate(limits['upper'])
+        }
+    }]
+    return json.dumps(data)
+
+
+@app.callback(
+    Output('universe-data-custom-graph', 'figure'),
+    [Input('universe-range-query-intermediate-data', 'children')],
+    [State('universe-data-custom-graph', 'figure')]
+)
+def update_graph_1(jsonified_cleaned_data, figure):
+    dataset = json.loads(jsonified_cleaned_data)[0]
+    if 'plotable_limits' not in dataset:
+        return figure
+    dataset = dataset['plotable_limits']
+    user = go.Scattergl({
+            'x': [0, dataset['user']['radius'] * math.cos(dataset['user']['phi'])],
+            'y': [0, dataset['user']['radius'] * math.sin(dataset['user']['phi'])],
+            'mode': 'lines+markers',
+            'marker': {'size': 4, 'color': '#aa0000'},
+            'line': {'width': 1, 'color': '#aa0000'},
+            'name': 'user_vector',
+            'hoverinfo': 'none',
+    })
+    for k, elm in enumerate(figure['data']):
+        if 'name' in elm:
+            if elm['name'] == 'user_vector':
+                figure['data'][k] = user
+                break
+        if k + 1 == len(figure['data']):
+            figure['data'] = [user] + figure['data']
+    donut = search_area_donut(
+            lower_phi=dataset['lower']['phi'],
+            upper_phi=dataset['upper']['phi']
+        )
+    for k, elm in enumerate(figure['data']):
+        if 'name' in elm:
+            if elm['name'] == 'search_area_donut':
+                figure['data'][k] = donut
+                break
+        if k + 1 == len(figure['data']):
+            figure['data'] = [donut] + figure['data']
+    return figure
+
+
+@app.callback(
+    Output('universe-range-query-ouput', 'children'),
+    [Input('universe-range-query-intermediate-data', 'children')]
+)
+def return_query_string(json_data):
+    data = json.loads(json_data)[0]
+    if 'query_limits' not in data:
+        if 'error_msg' in data:
+            return data['error_msg']
+    lower = data['query_limits']['lower']
+    upper = data['query_limits']['upper']
+    return f'n > {lower}  and n < {upper}'
+
+
 if __name__ == '__main__':
     app.run_server()

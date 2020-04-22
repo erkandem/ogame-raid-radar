@@ -10,7 +10,17 @@ ExchangeRate = namedtuple(
 )
 
 
-def calc_distance(p1: Location, p2: Location):
+def calc_distance(
+        p1: Location,
+        p2: Location
+) -> float:
+    """
+
+    Args:
+        p1 (Location): planet 1 of interest
+        p2 (Location): planet 1 of interest
+
+    """
     if p1.coords.galaxy != p1.coords.galaxy:
         distance = 20000 * math.fabs(p2.coords.galaxy - p1.coords.planet)
     else:

@@ -112,7 +112,7 @@ def _get_ogame_coordinate(lin_coord: int):
 def calculate_limits_linear(user_coords: {}, user_range: int) -> {}:
     if 1 < user_range > 15*499:
         raise NotImplementedError
-    coords_linear = calculate_linear_coordinate(user_coords)
+    coords_linear = UNIVERSE_FIGURE.calculate_linear_coordinate(user_coords)
     return {
         'lower': coords_linear - user_range,
         'upper': coords_linear + user_range
@@ -122,7 +122,7 @@ def calculate_limits_linear(user_coords: {}, user_range: int) -> {}:
 def calculate_limits_coord(user_coords: {}, user_range: int) -> {}:
     if 1 < user_range > 15*499:
         raise NotImplementedError
-    coords_linear = calculate_linear_coordinate(user_coords)
+    coords_linear = UNIVERSE_FIGURE.calculate_linear_coordinate(user_coords)
     return {
         'lower':  _get_ogame_coordinate(coords_linear - user_range),
         'upper':  _get_ogame_coordinate(coords_linear + user_range)
@@ -134,15 +134,6 @@ def validate_user_range(user_range):
         return None
     return user_range
 
-
-def calculate_linear_coordinate(coords: {}) -> int:
-    """todo find out what it does"""
-    value = (
-        (coords['galaxy'] - 1) * 499 * 15
-        + (coords['system'] - 1) * 15
-        + coords['planet']
-    )
-    return int(value)
 
 
 def calculate_radius(
@@ -260,7 +251,7 @@ class UniverseFigure:
             for planet in UniverseFigure.planets_range
         ]
         df = pd.DataFrame(all_coordinates)
-        df = UniverseFigure.calculate_linear_coordinate_df(df)
+        df['n'] = self.calculate_linear_coordinate(df)
         return df
 
     def calculate_radius(self, x):
@@ -270,27 +261,18 @@ class UniverseFigure:
         coords = self.coordinates_df.query('n = @lin_coord').to_dict()
         return coords
 
-    @staticmethod
-    def calculate_linear_coordinate_df(df):
+    def calculate_linear_coordinate(self, df: Union[pd.DataFrame, Dict]) -> Union[pd.Series, int]:
         """
         calculates a unique planet ID (integer) based on the universe configuration.
 
             df (pd.DataFrame): contains at least `galaxy`, `system` `planet`.
         """
-        df['n'] = (
-                (df['galaxy'] - 1) * max(UniverseFigure.systems_range) * max(UniverseFigure.planets_range)
-                + (df['system'] - 1) * max(UniverseFigure.planets_range)
+        value = (
+                (df['galaxy'] - 1) * max(self.systems_range) * max(self.planets_range)
+                + (df['system'] - 1) * max(self.planets_range)
                 + df['planet']
         )
-        return df
-
-    def calculate_system_degree_df(self, df):
-        df['system_degree'] = (
-                (df['galaxy'] - 1) * self.galaxy_increment
-                + (df['system'] - 1) * self.system_increment
-                + self.shift_to_yaxis
-        )
-        return df
+        return value
 
     def insert_universe_data(self, df):
         df['taken'] = df['coords'].apply(lambda x: int(self.universe_data.is_planet_taken(x)))
@@ -298,7 +280,7 @@ class UniverseFigure:
         df['x'] = df['system_degree'].apply(lambda x: math.cos(x))
         df['y'] = df['system_degree'].apply(lambda x: math.sin(x))
         df['r'] = df['planet'].apply(lambda x: self.calculate_radius(x))
-        df = self.calculate_linear_coordinate_df(df)
+        df['n'] = self.calculate_linear_coordinate(df)
         return df
 
     def _get_default_layout(self):

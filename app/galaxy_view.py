@@ -286,7 +286,6 @@ class UniverseFigure:
         df['x'] = df['system_degree'].apply(lambda x: math.cos(x))
         df['y'] = df['system_degree'].apply(lambda x: math.sin(x))
         df['r'] = df['planet'].apply(lambda x: self.calculate_radius(x))
-        df['n'] = self.calculate_linear_coordinate(df)
         return df
 
     def _get_default_layout(self):

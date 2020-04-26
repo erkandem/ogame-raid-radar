@@ -343,18 +343,6 @@ class UniverseFigure:
         ]
         return data
 
-    def what_is_it_good_for(self):
-        #%% append segmenting hint
-        labels = ['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine']
-        values = [4500, 2500, 1053, 500]
-
-        #%% Use `hole` to create a donut-like pie chart
-        n_ = go.Pie(
-            labels=labels,
-            values=values,
-            hole=self.minimum_distance
-        )
-
     def _get_figure(self, df):
         data = self._get_figure_data(df)
         layout = self._get_default_layout()

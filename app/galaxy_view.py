@@ -205,7 +205,8 @@ class UniverseFigure:
 
         Args:
             planet_slot (int, float):
-            minimum_distance (int, float): the minimum distance every planet should have from the center of the universe
+            minimum_distance (int, float): the minimum distance every planet should
+                                           have from the center of the universe
             planet_increment (int, float): distance between each planet slot
 
         Return:

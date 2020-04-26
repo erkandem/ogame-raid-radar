@@ -146,7 +146,6 @@ class UniverseFigure:
         self.system_increment = self.galaxy_increment / max(self.systems_range)
         self.minimum_distance = 1
         self.shift_to_yaxis = math.pi / 2
-        self.figure = None
         self.highscore_data = HighScoreData(universe_id=162, community='en')
         self.universe_data = UniverseQuestions(universe_id=162, community='en')
         self.df_dummy = self.get_dummy_universe_df()

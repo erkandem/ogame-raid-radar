@@ -11,7 +11,7 @@ todo:
 from datetime import datetime as dt
 import json
 import math
-from typing import Union
+from typing import Union, Dict, List
 import re
 
 import dash
@@ -665,8 +665,8 @@ def aggregate_data_processing(user_coords, user_range):
             'upper': {'phi': calculate_system_degree(limits['upper']), 'radius': calculate_radius(limits['upper']['planet'])}
         },
         'query_limits': {
-            'lower': calculate_linear_coordinate(limits['lower']),
-            'upper': calculate_linear_coordinate(limits['upper'])
+            'lower': UNIVERSE_FIGURE.calculate_linear_coordinate(limits['lower']),
+            'upper': UNIVERSE_FIGURE.calculate_linear_coordinate(limits['upper'])
         }
     }]
     return json.dumps(data)

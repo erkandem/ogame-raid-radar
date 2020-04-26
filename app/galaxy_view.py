@@ -684,6 +684,7 @@ def update_graph_1(jsonified_cleaned_data, figure):
             'line': {'width': 1, 'color': '#000000'},
             'name': 'user_vector',
             'hoverinfo': 'none',
+            'showlegend': False,
     })
     lower_limit = go.Scattergl({
             'x': [0, dataset['lower']['radius'] * math.cos(dataset['lower']['phi'])],
@@ -693,6 +694,7 @@ def update_graph_1(jsonified_cleaned_data, figure):
             'line': {'width': 1, 'color': '#FF0000'},
             'name': 'lower_limit',
             'hoverinfo': 'none',
+            'showlegend': False,
     })
     upper_limit = go.Scattergl({
             'x': [0, dataset['upper']['radius'] * math.cos(dataset['upper']['phi'])],
@@ -702,6 +704,7 @@ def update_graph_1(jsonified_cleaned_data, figure):
             'line': {'width': 1, 'color': '#FF0000'},
             'name': 'upper_limit',
             'hoverinfo': 'none',
+            'showlegend': False,
     })
 
     def replace_figure_data(figure, figure_name, go_object):

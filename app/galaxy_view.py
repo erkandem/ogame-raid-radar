@@ -32,7 +32,7 @@ requests_cache.install_cache('demo_cache')
 
 
 app_tag = 'ONSA - Defending Our Empire. Securing the Future'
-CSS_LIST = ['/static/sakura-earthly.css']
+CSS_LIST = ['/static/sakura-solarized-dark.css']
 
 
 def nowstr():

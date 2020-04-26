@@ -509,7 +509,8 @@ server = flask.Flask(__name__)
 app = dash.Dash(
     __name__,
     server=server,
-    suppress_callback_exceptions=True
+    suppress_callback_exceptions=True,
+    external_stylesheets=CSS_LIST
 )
 
 app.layout = get_initial_app_layout()

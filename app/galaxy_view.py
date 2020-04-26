@@ -43,7 +43,11 @@ def nowstr():
     return dt.now().strftime('%Y%m%d %H:%M:%S.%f')
 
 
-def search_area_donut(lower_phi=None, upper_phi=None, shift_to_yaxis=None) -> [go.Pie]:
+def search_area_donut(
+        lower_phi=None,
+        upper_phi=None,
+        shift_to_yaxis=None
+) -> [go.Pie]:
     if not lower_phi:
         lower_phi = math.pi / 4
     if not upper_phi:

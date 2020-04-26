@@ -519,19 +519,29 @@ def get_initial_app_layout():
                     dse.DataTable()
                 ], id='universe-data-table-wrapper')
             ),
+            html.Hr(),
             html.Div([
-                dcc.Input(
-                    placeholder='1-499',
-                    type='number',
-                    value=1,
-                    id='universe-range-query-range'
-                ),
-                dcc.Input(
-                    placeholder='2:222:2',
-                    type='text',
-                    value='',
-                    id='universe-range-query-start-coords'
-                ),
+                html.H3('Collectable Targets'),
+                html.Div(
+                    'The plot below will visualize the planets in the area of your planet'
+                    ' form which your starting to collect the ressources of inactive users'),
+                html.Div([
+                    html.Label('acceptable travel range in systems (e.g. 1-499)'),
+                    dcc.Input(
+                        type='number',
+                        value=15,
+                        id='universe-range-query-range'
+                    ),
+                ]),
+                html.Div([
+                    html.Label('departure planet (e.g. 2:222:2)'),
+                    dcc.Input(
+                        placeholder='Your planet (e.g. 2:222:2)',
+                        type='text',
+                        value='2:222:2',
+                        id='universe-range-query-start-coords'
+                    ),
+                    ]),
                 html.Div(
                     'output will be rendered aqui',
                     id='universe-range-query-ouput'

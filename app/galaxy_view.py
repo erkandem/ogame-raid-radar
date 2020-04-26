@@ -134,6 +134,10 @@ def validate_user_range(user_range):
 class UniverseFigure:
 
     def __init__(self):
+        """
+        TODO: remove hardcoding of universe to plot, and galaxies per universe and so on
+              these values depend on the specific universe
+        """
         self.galaxies_range = list(range(1, 10))
         self.systems_range = list(range(1, 500))
         self.planets_range = list(range(1, 16))

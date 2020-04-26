@@ -109,18 +109,13 @@ def parse_user_coords(coords: str):
     return coords
 
 
-def _get_ogame_coordinate(lin_coord: int):
-    coords = COORDINATES_DF.query('n == @lin_coord')
-    coords = coords.to_dict(orient='records')
-    coords = coords[0]
-    return coords
-
-
 def calculate_limits_coord(user_coords: {}, user_range: int) -> {}:
     if user_range < 1:
         raise NotImplementedError('range must be positiv non zero')
     if user_range > (max(UNIVERSE_FIGURE.systems_range)):
-        raise NotImplementedError('Overflow not implemented (move from end of universe to beginning)')
+        raise NotImplementedError(
+            'Overflow not implemented (move from end of universe to beginning)'
+        )
 
     # translate user_range to systems
     user_range = user_range * max(UNIVERSE_FIGURE.planets_range)
@@ -129,8 +124,8 @@ def calculate_limits_coord(user_coords: {}, user_range: int) -> {}:
     user_coords['planet'] = max(UNIVERSE_FIGURE.planets_range)
     coords_linear = UNIVERSE_FIGURE.calculate_linear_coordinate(user_coords)
     return {
-        'lower':  _get_ogame_coordinate(coords_linear - user_range),
-        'upper':  _get_ogame_coordinate(coords_linear + user_range)
+        'lower': UNIVERSE_FIGURE._get_ogame_coordinate_from_linear(coords_linear - user_range),
+        'upper':  UNIVERSE_FIGURE._get_ogame_coordinate_from_linear(coords_linear + user_range)
     }
 
 
@@ -223,16 +218,38 @@ class UniverseFigure:
 
         return minimum_distance + planet_increment * planet_slot
 
-    def get_ogame_coordinate(self, lin_coord: int):
-        coords = self.coordinates_df.query('n = @lin_coord').to_dict()
+    def _get_ogame_coordinate_from_linear(
+            self,
+            lin_coord: int
+    ) -> {str: int}:
+        """
+        Inverse operation of `calculate_linear_coordinate`
+
+        Args:
+            lin_coord(int):
+
+        Returns:
+            (dict) with `galaxy`, `system` and `planet` keys, with integer values
+        """
+        coords = self.coordinates_df.query('n == @lin_coord')
+        coords = coords.to_dict(orient='records')
+        coords = coords[0]
         return coords
 
-    def calculate_linear_coordinate(self, df: Union[pd.DataFrame, Dict]) -> Union[pd.Series, int]:
+    def calculate_linear_coordinate(
+            self,
+            df:
+            Union[pd.DataFrame, Dict]
+    ) -> Union[pd.Series, int]:
         """
         calculates a unique planet ID (integer) based on the universe configuration.
-
+        
+        Inverse of `_get_ogame_coordinate_from_linear`
+        
+        Args:
             df (pd.DataFrame): contains at least `galaxy`, `system` `planet`.
         """
+
         value = (
                 (df['galaxy'] - 1) * max(self.systems_range) * max(self.planets_range)
                 + (df['system'] - 1) * max(self.planets_range)
@@ -544,7 +561,6 @@ def get_initial_app_layout():
 
 
 UNIVERSE_FIGURE = UniverseFigure()
-COORDINATES_DF = UNIVERSE_FIGURE.generate_coordinates_df()
 server = flask.Flask(__name__)
 app = dash.Dash(
     __name__,

@@ -388,18 +388,6 @@ class UniverseFigure:
         df = df[['n', 'n2', 'x', 'y', 'r', 'galaxy', 'system', 'planet', 'taken', 'coords', 'planet_name', 'player_name', 'status', 'alliance_name', 'eco_score']]
         return df
 
-    def get_dummy_planets_fig(self):
-        df = self.get_dummy_planets_data()
-        return self._get_figure(df)
-
-    def get_taken_planets_fig(self):
-        df = self.get_taken_planets_data()
-        return self._get_figure(df)
-
-    def get_free_planets_fig(self):
-        df = self.get_free_planets_data()
-        return self._get_figure(df)
-
     def get_taken_inactive_planets_fig(self):
         df = self.get_taken_inactive_planets_data()
         return self._get_figure(df)
@@ -476,51 +464,17 @@ def cast_to_dash_table(df: pd.DataFrame) -> dse.DataTable:
 
 def get_initial_app_layout():
     return html.Div([
-        html.Button(
-            children='Re Render',
-            type='submit',
-            id='universe-graph-render-button'
-        ),
-        dcc.RadioItems(
-            options=[
-                {'label': 'free', 'value': 'free', 'disabled': True},
-                {'label': 'taken', 'value': 'taken'}
-            ],
-            value='taken',
-            id='universe-taken-free-toggle'
-        ),
-        dcc.RadioItems(
-            options=[
-                {'label': 'active', 'value': 'active'},
-                {'label': 'inactive', 'value': 'inactive'}
-            ],
-            value='active',
-            id='universe-active-inactive-toggle'
-        ),
         html.Div([
-            dcc.Loading(
-                dcc.Graph(
-                        figure=UNIVERSE_FIGURE.get_dummy_planets_fig(),
-                        config={},
-                        id='universe-graph'
-                    )
-                ),
-            dcc.Loading(
-                html.Div([
-                    dse.DataTable()
-                ], id='universe-data-table-wrapper')
-            ),
-            html.Hr(),
+            html.H3('Raid Radar'),
+            html.Div(
+                'The plot below will visualize the planets in the area of your planet'
+                ' form which your starting to collect the resources of inactive users'),
             html.Div([
-                html.H3('Collectable Targets'),
-                html.Div(
-                    'The plot below will visualize the planets in the area of your planet'
-                    ' form which your starting to collect the resources of inactive users'),
                 html.Div([
                     html.Label('acceptable travel range in systems (e.g. 1-499)'),
                     dcc.Input(
                         type='number',
-                        value=15,
+                        value=50,
                         id='universe-range-query-range'
                     ),
                 ]),
@@ -532,12 +486,22 @@ def get_initial_app_layout():
                         value='2:222:2',
                         id='universe-range-query-start-coords'
                     ),
-                    ]),
+                ]),
                 html.Div(
                     '[{}]',
                     id='universe-range-query-intermediate-data',
                     style={'display': 'none'}),
             ], id='universe-range-query-container'
+            ),
+            dcc.Graph(
+                    figure=UNIVERSE_FIGURE.get_taken_inactive_planets_fig(),
+                    config={},
+                    id='universe-graph'
+                ),
+            dcc.Loading(
+                html.Div([
+                    html.Div(cast_to_dash_table(UNIVERSE_FIGURE.get_inactive_players()))
+                ], id='universe-data-table-wrapper')
             ),
             html.Div(id='universe-data-interactivity-container')
         ])
@@ -553,44 +517,6 @@ app = dash.Dash(
 )
 
 app.layout = get_initial_app_layout()
-
-
-@app.callback(
-    Output('universe-graph', 'figure'),
-    [Input('universe-active-inactive-toggle', 'value'),
-     Input('universe-taken-free-toggle', 'value')],
-    [State('universe-graph', 'figure')]
-)
-def show_taken_or_free(activeOrInactive, takenOrFree, figure):
-    if activeOrInactive == 'active' and takenOrFree == 'taken':
-        return UNIVERSE_FIGURE.get_taken_active_planets_fig()
-    if activeOrInactive == 'inactive' and takenOrFree == 'taken':
-        return UNIVERSE_FIGURE.get_taken_inactive_planets_fig()
-    if activeOrInactive == 'active' and takenOrFree == 'free':
-        return UNIVERSE_FIGURE.get_free_planets_fig()
-    if activeOrInactive == 'inactive' and takenOrFree == 'free':
-        return figure
-
-
-@app.callback(
-    Output('universe-data-table-wrapper', 'children'),
-    [Input('universe-active-inactive-toggle', 'value'),
-     Input('universe-taken-free-toggle', 'value')],
-    [State('universe-data-table-wrapper', 'children')]
-)
-def render_data_table(activeOrInactive, takenOrFree, child):
-    if activeOrInactive == 'active' and takenOrFree == 'taken':
-        df = UNIVERSE_FIGURE.get_active_players()
-        return html.Div(cast_to_dash_table(df))
-    if activeOrInactive == 'inactive' and takenOrFree == 'taken':
-        df = UNIVERSE_FIGURE.get_inactive_players()
-        return html.Div(cast_to_dash_table(df))
-    if activeOrInactive == 'active' and takenOrFree == 'free':
-        df = UNIVERSE_FIGURE.get_free_planets_data()
-        return html.Div(cast_to_dash_table(df))
-    if activeOrInactive == 'inactive' and takenOrFree == 'free':
-        df = UNIVERSE_FIGURE.get_free_planets_data()
-        return html.Div(cast_to_dash_table(df))
 
 
 @app.callback(
@@ -674,9 +600,9 @@ def aggregate_data_processing(user_coords, user_range):
 
 
 @app.callback(
-    Output('universe-data-custom-graph', 'figure'),
+    Output('universe-graph', 'figure'),
     [Input('universe-range-query-intermediate-data', 'children')],
-    [State('universe-data-custom-graph', 'figure')]
+    [State('universe-graph', 'figure')]
 )
 def update_graph_1(jsonified_cleaned_data, figure):
     dataset = json.loads(jsonified_cleaned_data)[0]

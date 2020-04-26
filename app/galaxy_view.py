@@ -653,10 +653,17 @@ def aggregate_data_processing(user_coords, user_range):
         return json.dumps([{'error_msg': 'server error'}])
     data = [{
         'plotable_limits': {
-            'user': {'phi': UNIVERSE_FIGURE.calculate_system_degree(user_coords),
-                     'radius': UNIVERSE_FIGURE.calculate_radius(user_coords['planet'])},
-            'lower': {'phi': UNIVERSE_FIGURE.calculate_system_degree(limits['lower']), 'radius': UNIVERSE_FIGURE.calculate_radius(limits['lower']['planet'])},
-            'upper': {'phi': UNIVERSE_FIGURE.calculate_system_degree(limits['upper']), 'radius': UNIVERSE_FIGURE.calculate_radius(limits['upper']['planet'])}
+            'user': {
+                'phi': UNIVERSE_FIGURE.calculate_system_degree(user_coords),
+                'radius': UNIVERSE_FIGURE.calculate_radius(user_coords['planet'])
+            },
+            'lower': {
+                'phi': UNIVERSE_FIGURE.calculate_system_degree(limits['lower']),
+                'radius': UNIVERSE_FIGURE.calculate_radius(limits['lower']['planet'])},
+            'upper': {
+                'phi': UNIVERSE_FIGURE.calculate_system_degree(limits['upper']),
+                'radius': UNIVERSE_FIGURE.calculate_radius(limits['upper']['planet'])
+            },
         },
         'query_limits': {
             'lower': UNIVERSE_FIGURE.calculate_linear_coordinate(limits['lower']),

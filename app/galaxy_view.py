@@ -527,7 +527,7 @@ def get_initial_app_layout():
                 html.H3('Collectable Targets'),
                 html.Div(
                     'The plot below will visualize the planets in the area of your planet'
-                    ' form which your starting to collect the ressources of inactive users'),
+                    ' form which your starting to collect the resources of inactive users'),
                 html.Div([
                     html.Label('acceptable travel range in systems (e.g. 1-499)'),
                     dcc.Input(

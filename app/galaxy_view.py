@@ -295,6 +295,7 @@ class UniverseFigure:
             'margin': {'l': 20, 'b': 20, 't': 20, 'r': 20},
             'xaxis': {
                 'range': [1.55, -1.55],
+                'zeroline': False,
                 'showgrid': False,
                 'tickmode': 'auto',
                 'nticks': 0,
@@ -302,6 +303,7 @@ class UniverseFigure:
             },
             'yaxis': {
                 'range': [-1.55, 1.55],
+                'zeroline': False,
                 'showgrid': False,
                 'tickmode': 'auto',
                 'nticks': 0,

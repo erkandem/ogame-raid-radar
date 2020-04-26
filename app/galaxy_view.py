@@ -704,29 +704,44 @@ def update_graph_1(jsonified_cleaned_data, figure):
             'x': [0, dataset['user']['radius'] * math.cos(dataset['user']['phi'])],
             'y': [0, dataset['user']['radius'] * math.sin(dataset['user']['phi'])],
             'mode': 'lines+markers',
-            'marker': {'size': 4, 'color': '#aa0000'},
-            'line': {'width': 1, 'color': '#aa0000'},
+            'marker': {'size': 4, 'color': '#000000'},
+            'line': {'width': 1, 'color': '#000000'},
             'name': 'user_vector',
             'hoverinfo': 'none',
     })
-    for k, elm in enumerate(figure['data']):
-        if 'name' in elm:
-            if elm['name'] == 'user_vector':
-                figure['data'][k] = user
-                break
-        if k + 1 == len(figure['data']):
-            figure['data'] = [user] + figure['data']
-    donut = search_area_donut(
-            lower_phi=dataset['lower']['phi'],
-            upper_phi=dataset['upper']['phi']
-        )
-    for k, elm in enumerate(figure['data']):
-        if 'name' in elm:
-            if elm['name'] == 'search_area_donut':
-                figure['data'][k] = donut
-                break
-        if k + 1 == len(figure['data']):
-            figure['data'] = [donut] + figure['data']
+    lower_limit = go.Scattergl({
+            'x': [0, dataset['lower']['radius'] * math.cos(dataset['lower']['phi'])],
+            'y': [0, dataset['lower']['radius'] * math.sin(dataset['lower']['phi'])],
+            'mode': 'lines+markers',
+            'marker': {'size': 4, 'color': '#FF0000'},
+            'line': {'width': 1, 'color': '#FF0000'},
+            'name': 'lower_limit',
+            'hoverinfo': 'none',
+    })
+    upper_limit = go.Scattergl({
+            'x': [0, dataset['upper']['radius'] * math.cos(dataset['upper']['phi'])],
+            'y': [0, dataset['upper']['radius'] * math.sin(dataset['upper']['phi'])],
+            'mode': 'lines+markers',
+            'marker': {'size': 4, 'color': '#FF0000'},
+            'line': {'width': 1, 'color': '#FF0000'},
+            'name': 'upper_limit',
+            'hoverinfo': 'none',
+    })
+
+    def replace_figure_data(figure, figure_name, go_object):
+        for k, elm in enumerate(figure['data']):
+            if 'name' in elm:
+                if elm['name'] == figure_name:
+                    figure['data'][k] = go_object
+                    break
+            if k + 1 == len(figure['data']):
+                figure['data'] = [go_object] + figure['data']
+        return figure
+
+    figure = replace_figure_data(figure, 'user_vector', user)
+    figure = replace_figure_data(figure, 'lower_limit', lower_limit)
+    figure = replace_figure_data(figure, 'upper_limit', upper_limit)
+
     return figure
 
 

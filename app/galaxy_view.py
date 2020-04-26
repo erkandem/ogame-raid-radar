@@ -626,8 +626,14 @@ def update_graph_1(jsonified_cleaned_data, figure):
             'showlegend': False,
     })
     lower_limit = go.Scattergl({
-            'x': [0, dataset['lower']['radius'] * math.cos(dataset['lower']['phi'])],
-            'y': [0, dataset['lower']['radius'] * math.sin(dataset['lower']['phi'])],
+            'x': [
+                min_raidus * math.cos(dataset['lower']['phi']),
+                dataset['lower']['radius'] * math.cos(dataset['lower']['phi']),
+            ],
+            'y': [
+                min_raidus * math.sin(dataset['lower']['phi']),
+                dataset['lower']['radius'] * math.sin(dataset['lower']['phi'])
+            ],
             'mode': 'lines+markers',
             'marker': {'size': 4, 'color': '#00DA00'},
             'line': {'width': 1, 'color': '#00DA00'},
@@ -636,8 +642,14 @@ def update_graph_1(jsonified_cleaned_data, figure):
             'showlegend': False,
     })
     upper_limit = go.Scattergl({
-            'x': [0, dataset['upper']['radius'] * math.cos(dataset['upper']['phi'])],
-            'y': [0, dataset['upper']['radius'] * math.sin(dataset['upper']['phi'])],
+            'x': [
+                min_raidus * math.cos(dataset['upper']['phi']),
+                dataset['upper']['radius'] * math.cos(dataset['upper']['phi']),
+            ],
+            'y': [
+                min_raidus * math.sin(dataset['upper']['phi']),
+                dataset['upper']['radius'] * math.sin(dataset['upper']['phi'])
+            ],
             'mode': 'lines+markers',
             'marker': {'size': 4, 'color': '#00DA00'},
             'line': {'width': 1, 'color': '#00DA00'},

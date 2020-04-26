@@ -571,16 +571,6 @@ app = dash.Dash(
 app.layout = get_initial_app_layout()
 
 
-cb = '''
-@app.callback(
-    Output('universe-graph', 'figure'),
-    [Input('universe-graph-render-button', 'n_clicks')]
-)
-def rerender_figure(n_clicks):
-    return get_universe_fig()
-'''
-
-
 @app.callback(
     Output('universe-graph', 'figure'),
     [Input('universe-active-inactive-toggle', 'value'),

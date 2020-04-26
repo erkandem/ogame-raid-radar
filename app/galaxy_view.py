@@ -260,10 +260,16 @@ class UniverseFigure:
             (pd.Series, float): depending on the input
 
         """
+        if not galaxy_increment:
+            galaxy_increment = self.galaxy_increment
+        if not system_increment:
+            system_increment = self.system_increment
+        if not shift_to_yaxis:
+            shift_to_yaxis = self.shift_to_yaxis
         system_degree = (
-                (df['galaxy'] - 1) * galaxy_increment if galaxy_increment else self.galaxy_increment
-                + (df['system'] - 1) * system_increment if system_increment else self.system_increment
-                + shift_to_yaxis if shift_to_yaxis else self.shift_to_yaxis
+                (df['galaxy'] - 1) * galaxy_increment
+                + (df['system'] - 1) * system_increment
+                + shift_to_yaxis
         )
         return system_degree
 

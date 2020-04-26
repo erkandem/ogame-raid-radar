@@ -93,7 +93,11 @@ def validate_user_coords(coords: str):
     )
     if len(result) != 1:
         return {}
-    coords = {'galaxy': int(result[0][0]),  'system': int(result[0][1]), 'planet': int(result[0][2])}
+    coords = {
+        'galaxy': int(result[0][0]),
+        'system': int(result[0][1]),
+        'planet': int(result[0][2])
+    }
     coords = validate_coords(coords)
     return coords
 

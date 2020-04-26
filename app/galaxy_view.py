@@ -261,9 +261,9 @@ class UniverseFigure:
 
         """
         system_degree = (
-                (df['galaxy'] - 1) * galaxy_increment or self.galaxy_increment
-                + (df['system'] - 1) * system_increment or self.system_increment
-                + shift_to_yaxis or self.shift_to_yaxis
+                (df['galaxy'] - 1) * galaxy_increment if galaxy_increment else self.galaxy_increment
+                + (df['system'] - 1) * system_increment if system_increment else self.system_increment
+                + shift_to_yaxis if shift_to_yaxis else self.shift_to_yaxis
         )
         return system_degree
 

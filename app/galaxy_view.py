@@ -268,6 +268,11 @@ class UniverseFigure:
 
     @staticmethod
     def calculate_linear_coordinate_df(df):
+        """
+        calculates a unique planet ID (integer) based on the universe configuration.
+
+            df (pd.DataFrame): contains at least `galaxy`, `system` `planet`.
+        """
         df['n'] = (
                 (df['galaxy'] - 1) * max(UniverseFigure.systems_range) * max(UniverseFigure.planets_range)
                 + (df['system'] - 1) * max(UniverseFigure.planets_range)

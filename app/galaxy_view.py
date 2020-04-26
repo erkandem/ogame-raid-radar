@@ -376,11 +376,11 @@ class UniverseFigure:
         df_player_name.set_index('alliance', inplace=True)
         df_player_name.rename(index=str, columns={'id': 'player_id','name': 'player_name'}, inplace=True)
 
-        allience_names = UNIVERSE_FIGURE.universe_data.alliences.loc[:, ['id', 'name']]
-        allience_names.set_index('id', inplace=True)
-        allience_names.rename(index=str, columns={'name': 'allience_name'}, inplace=True)
+        alliance_names = UNIVERSE_FIGURE.universe_data.alliances.loc[:, ['id', 'name']]
+        alliance_names.set_index('id', inplace=True)
+        alliance_names.rename(index=str, columns={'name': 'alliance_name'}, inplace=True)
 
-        df_player = df_player_name.join(allience_names)
+        df_player = df_player_name.join(alliance_names)
         df_player.set_index('player_id', inplace=True, drop=True)
 
         df_eco_score = UNIVERSE_FIGURE.highscore_data.economy.loc[:, ['id', 'score']]
@@ -395,7 +395,7 @@ class UniverseFigure:
         df = df_detailed.set_index('coords').join(df_viz)
         df.reset_index(inplace=True)
         df['n2'] = df['n']  # introduce possible second filter rule
-        df = df[['n', 'n2', 'x', 'y', 'r', 'galaxy', 'system', 'planet', 'taken', 'coords', 'planet_name', 'player_name', 'status', 'allience_name', 'eco_score']]
+        df = df[['n', 'n2', 'x', 'y', 'r', 'galaxy', 'system', 'planet', 'taken', 'coords', 'planet_name', 'player_name', 'status', 'alliance_name', 'eco_score']]
         return df
 
     def get_dummy_planets_fig(self):

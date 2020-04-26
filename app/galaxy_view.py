@@ -125,7 +125,7 @@ def calculate_limits_coord(user_coords: {}, user_range: int) -> {}:
     coords_linear = UNIVERSE_FIGURE.calculate_linear_coordinate(user_coords)
     return {
         'lower': UNIVERSE_FIGURE._get_ogame_coordinate_from_linear(coords_linear - user_range),
-        'upper':  UNIVERSE_FIGURE._get_ogame_coordinate_from_linear(coords_linear + user_range)
+        'upper': UNIVERSE_FIGURE._get_ogame_coordinate_from_linear(coords_linear + user_range)
     }
 
 

@@ -427,7 +427,7 @@ class UniverseFigure:
         return df
 
 
-def cast_to_dash_table(df: pd.DataFrame) -> dse.DataTable:
+def cast_to_dash_table(df: pd.DataFrame, columns: List = None) -> dse.DataTable:
     """
     casts the data of an pandas object into
     dash DataTable object
@@ -435,9 +435,11 @@ def cast_to_dash_table(df: pd.DataFrame) -> dse.DataTable:
     Args:
         df (pd.DataFrame):
     """
+    if not columns:
+        columns = df.columns
     return dse.DataTable(**{
         'id': 'universe-data-table',
-        'columns': [{'name': col, 'id': col} for col in df.columns],
+        'columns': [{'name': col, 'id': col} for col in columns],
         'data': df.to_dict('records'),
         'filter_action': 'native',
         'sort_action': 'native',
@@ -496,7 +498,12 @@ def get_initial_app_layout():
                 ),
             dcc.Loading(
                 html.Div([
-                    html.Div(cast_to_dash_table(UNIVERSE_FIGURE.get_inactive_players()))
+                    html.Div(
+                        cast_to_dash_table(
+                            UNIVERSE_FIGURE.get_inactive_players(),
+                            columns=['coords','galaxy', 'system', 'planet', 'taken', 'planet_name', 'player_name', 'status', 'alliance_name', 'eco_score']
+                        )
+                    )
                 ], id='universe-data-table-wrapper')
             ),
             html.Div(id='universe-data-interactivity-container')

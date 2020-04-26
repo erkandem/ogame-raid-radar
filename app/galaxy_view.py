@@ -325,7 +325,8 @@ class UniverseFigure:
                         },
                         'name': f'{planet_slot}. slot',
                         'hoverinfo': 'text',
-                        'hovertext': df.query(query_str)['coords']
+                        'hovertext': df.query(query_str)['coords'],
+                        'showlegend': False,
             }) for planet_slot in self.planets_range
         ]
         return data

@@ -546,10 +546,6 @@ def get_initial_app_layout():
                     ),
                     ]),
                 html.Div(
-                    'output will be rendered aqui',
-                    id='universe-range-query-ouput'
-                ),
-                html.Div(
                     '[{}]',
                     id='universe-range-query-intermediate-data',
                     style={'display': 'none'}),
@@ -735,20 +731,6 @@ def update_graph_1(jsonified_cleaned_data, figure):
     figure = replace_figure_data(figure, 'upper_limit', upper_limit)
 
     return figure
-
-
-@app.callback(
-    Output('universe-range-query-ouput', 'children'),
-    [Input('universe-range-query-intermediate-data', 'children')]
-)
-def return_query_string(json_data):
-    data = json.loads(json_data)[0]
-    if 'query_limits' not in data:
-        if 'error_msg' in data:
-            return data['error_msg']
-    lower = data['query_limits']['lower']
-    upper = data['query_limits']['upper']
-    return f'n > {lower}  and n < {upper}'
 
 
 if __name__ == '__main__':

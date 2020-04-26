@@ -615,6 +615,7 @@ def update_graph_1(jsonified_cleaned_data, figure):
     if 'plotable_limits' not in dataset:
         return figure
     dataset = dataset['plotable_limits']
+    min_raidus = UNIVERSE_FIGURE.minimum_distance
     user = go.Scattergl({
             'x': [0, dataset['user']['radius'] * math.cos(dataset['user']['phi'])],
             'y': [0, dataset['user']['radius'] * math.sin(dataset['user']['phi'])],

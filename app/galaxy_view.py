@@ -24,7 +24,6 @@ import flask
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
-
 from ogame_stats import UniverseData, UniverseQuestions
 from ogame_stats import HighScoreData
 import requests_cache
@@ -287,11 +286,23 @@ class UniverseFigure:
 
     def _get_default_layout(self):
         return go.Layout({
+            'title': {
+                'text': 'inactive players in your area',
+                'font': {
+                    'family': 'serif',
+                    'size': 18,
+                    'color': '#00DA00'
+                },
+                'x': 0.025,
+                'y': 0.975,
+            'yanchor': 'top',
+            'xanchor': 'left',
+            },
             'autosize': False,
             'width': 650,
             'height': 500,
-            'plot_bgcolor': '#f9f9f9',
-            'paper_bgcolor': '#f9f9f9',
+            'plot_bgcolor': '#005A6F',
+            'paper_bgcolor': '#005A6F',
             'margin': {'l': 20, 'b': 20, 't': 20, 'r': 20},
             'xaxis': {
                 'range': [1.55, -1.55],

@@ -1,22 +1,44 @@
+# ogame raid radar
 
-![all inactive](static/sample.png)
+a python dash app to visualize inactive players in a universe for https://ogame.org  
 
-How is it done?
- - all `planets` rotate around a fictional `center of universe (x=0,y=0)`
- - the distance of a planet from the core represents it's solar system position
- - `galaxies` and `solar system` are defined by an angle starting from `x=0` i.g. 12 o'clock
- - `x` and `y` are calculated similar/same as complex numbers
+---
+
+## Demo
+ Get an interactive plot with all inanctive players on a server and get highlight the ones
+ near to your departure planet.
+![all inactive players viszualized](static/styledsample.png)
+
+Look through the list and find the most lucrative ones (highest economy score). 
+Get all values as a `csv` file by hitting the `export` button
+![all inactive players in a table](static/sample_table.png)
+
+
+## usage
+The app can be used after the  usual steps of 
+ - getting the code, 
+ - creating a virtualenv and activating it to protect your system python version,
+ - installing the required third party packages and
+ - finally starting the app
+
+```bash
+git clone <adress of raid radar repo > <target>
+cd raidradar
+virtualenv -p python3.7 venv
+. ./venv/bin/activate
+pip install -r requirements.txt 
+python raidradar.py
+```
+
+## How is it done?
+First forget about Newton, heliocentric view, or physics in general. The idea here is to get a visualisation logic.
+So:
+ - All `planets` exist around a fictional `center of the universe (x = 0, y = 0)`.
+ - The distance of a planet from the core of the universe represents its solar system position in the game. 
+ - The `galaxy` and `solar system` are represented by an angle. much like second relate to minute on a regular analog clock.
  
-```
-shift_to_yaxis = pi / 2
-galaxy_increment = (2 * pi) / 9 
-system_increment = galaxy_increment / 499
-minimum_distance = 1
-```
 
-the planets start at `x=0`. To match a clock pattern a constant is added to `phi` 
-  - `shift_to_yaxis` is set to `pi / 2` (i.e. 90°, here counter clockwise)
-
+Here is the math behind it:
 ```
 z = r * e^(i * phi)
 
@@ -25,35 +47,70 @@ x = Re(z)
 y = Im(z)
 z = x + iy
 z = r(cos(phi) + i * sin(phi))
-
 ```
-usually `r` would be calculated:
+`galaxy_increment` and `system_increment` depend on the galaxies in the universe and systems in a galaxy.
+Essentially these constants are just there to ensure that our planets are spread equally and only between `0` in `2pi` (pi like 3.1415)
+
+The plot would start at `y = 0` (representing 1:1:1) and continue counter clockwise. 
+That is why `shift_to_yaxis` is introduced into calculation of `phi`. 
+Now the plot starts at `x = 0` but still continues counter clockwise.
+
+Usually `r` would be calculated:
+
 ```
 r = |z| = sqrt(x^2 + y^2)
 ```
-
-instead we set r to 1 and get our preliminary `x` and `y` values
+In that scenario r would form the classic spiral form. Not what we want.
+Instead we set `r = 1` - for now - and get our preliminary `x` and `y` values
 ```
-r == 1 
-x = cos(phi)
-y = sin(phi)
-```
-
-adjusting the radius `r` to represent the `slot` in the `solar system`.
-`slot = 5` would translates to fifth planet in respective `solar system`
-
-```
-r = f(slot) = planet_icrement * slot + minimum_distance
+r = 1 
+x = Re(z) = cos(phi)
+y = Im(z) = sin(phi)
 ```
 
-final coordinates ready to be plotted
+Okay, `galaxies` and the `solar system` are represented by an angle `phi`
+We could use `r` to represent the `slot` in the `solar system` such that
+`slot = 5` would translates to fifth planet in the respective `solar system`.
+An empirical constant `minimum_distance` and `planet_increment` is set to ensure 
+that all elements are spread out across the plot (i.e. planets) can be plotted.
 
-```tex
-x = x * r
-y = y * r
+```
+r(planet_slot) = f(planet_slot) = planet_increment * planet_slot + minimum_distance
 ```
 
-The graph is running counter clockwise which is as expected.
-To match it one more step with a clock pattern **the `xaxis` is reversed**.
+The final ready to coordinates for cartesian plot can than be obtained with:
 
-> Note We never actually touched compley numbers but borrowed the concept!
+```
+x = r(planet_slot) * cos(phi(galaxy, system))
+y = r(planet_slot) * sin(phi(galaxy, system))
+```
+
+The plot is running counter clockwise which non intuitive.
+To match it with an intuitive clock pattern **the `xaxis` is reversed**.
+
+
+> Note We never actually touched complex numbers but borrowed the concept of 
+> the complex plain to visualize complex numbers!
+
+## Constraints
+1. I created this app mostly for my self to learn more about dash table elements.
+   Note that the project uses a global variable `UNIVERSE_FIGURE`. That means that the app will break 
+   with multiple users.
+   
+   It's possible to have multiple users by using a session caches see (https://dash.plotly.com/sharing-data-between-callbacks).
+
+2. The universe to plot is hardcoded (`universe_id=162, community='en'`). `dcc.Location` could be used to route 
+   to an app for each universe running on the `ogame` servers. But the global `UNIVERSE_FIGURE` needs to be removed
+   to achieve that. 
+
+3. To reduce `http` calls I used `requests_cache`. You could remove the initialisation of it, 
+   or set an expiry matching the update frequencies of the XML files.
+
+
+## Resources
+
+https://paletton.com to get excellent color suggestions to match the CSS theme which is already optimized by great people.
+
+https://github.com/oxalorg/sakura for a drop in css
+
+https://github.com/erkandem/ogame-stats client package for ogame game statistics

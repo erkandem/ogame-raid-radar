@@ -26,6 +26,9 @@ import plotly.graph_objects as go
 
 from ogame_stats import UniverseData, UniverseQuestions
 from ogame_stats import HighScoreData
+import requests_cache
+requests_cache.install_cache('demo_cache')
+
 from src.utils import calc_distance
 from src.utils import calc_flight_time
 from src.planet import Location
@@ -143,32 +146,6 @@ def validate_user_range(user_range):
     return user_range
 
 
-def calculate_radius(
-        planet_slot: Union[int, float],
-        *,
-        minimum_distance: Union[int, float] = None,
-        planet_increment: Union[int, float] = None
-):
-    """
-    Plotting utility. Returns the the `radius` representing the distance
-    of the planet form the center of the universe.
-    All planets with the same slot in each solar system are modelled to
-    have the same `radius`
-
-    The values `minimum_distance` and `planet_increment` are empirical.
-
-    Args:
-        planet_slot (int, float):
-        minimum_distance (int, float): the minimum distance every planet should have from the center of the universe
-        planet_increment (int, float): distance between each planet slot
-    """
-    if minimum_distance is None:
-        minimum_distance = 1.0
-    if planet_increment is None:
-        planet_increment = 1 / (15 * 2)
-    return minimum_distance + planet_increment * planet_slot
-
-
 class UniverseFigure:
 
     def __init__(self):
@@ -222,8 +199,35 @@ class UniverseFigure:
         df['n'] = self.calculate_linear_coordinate(df)
         return df
 
-    def calculate_radius(self, x):
-        return self.minimum_distance + self.planet_increment * x
+    def calculate_radius(
+            self,
+            planet_slot: Union[int, float],
+            *,
+            minimum_distance: Union[int, float] = None,
+            planet_increment: Union[int, float] = None
+    ) -> float:
+        """
+        Plotting utility. Returns the the `radius` representing the distance
+        of the planet form the center of the universe.
+        All planets with the same slot in each solar system are modelled to
+        have the same `radius`
+
+        The values `minimum_distance` and `planet_increment` are empirical.
+
+        Args:
+            planet_slot (int, float):
+            minimum_distance (int, float): the minimum distance every planet should have from the center of the universe
+            planet_increment (int, float): distance between each planet slot
+
+        Return:
+            (float)
+        """
+        if minimum_distance is None:
+            minimum_distance = self.minimum_distance
+        if planet_increment is None:
+            planet_increment = self.planet_increment
+
+        return minimum_distance + planet_increment * planet_slot
 
     def get_ogame_coordinate(self, lin_coord: int):
         coords = self.coordinates_df.query('n = @lin_coord').to_dict()
@@ -678,9 +682,9 @@ def aggregate_data_processing(user_coords, user_range):
     data = [{
         'plotable_limits': {
             'user': {'phi': UNIVERSE_FIGURE.calculate_system_degree(user_coords),
-                     'radius': calculate_radius(user_coords['planet'])},
-            'lower': {'phi': UNIVERSE_FIGURE.calculate_system_degree(limits['lower']), 'radius': calculate_radius(limits['lower']['planet'])},
-            'upper': {'phi': UNIVERSE_FIGURE.calculate_system_degree(limits['upper']), 'radius': calculate_radius(limits['upper']['planet'])}
+                     'radius': UNIVERSE_FIGURE.calculate_radius(user_coords['planet'])},
+            'lower': {'phi': UNIVERSE_FIGURE.calculate_system_degree(limits['lower']), 'radius': UNIVERSE_FIGURE.calculate_radius(limits['lower']['planet'])},
+            'upper': {'phi': UNIVERSE_FIGURE.calculate_system_degree(limits['upper']), 'radius': UNIVERSE_FIGURE.calculate_radius(limits['upper']['planet'])}
         },
         'query_limits': {
             'lower': UNIVERSE_FIGURE.calculate_linear_coordinate(limits['lower']),

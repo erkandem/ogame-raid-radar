@@ -24,20 +24,12 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 
-from src import UniverseData
-from src import HighScoresData
+from ogame_stats import UniverseData, UniverseQuestions
+from ogame_stats import HighScoreData
 from src.utils import calc_distance
 from src.utils import calc_flight_time
 from src.planet import Location
 from src.planet import Coords
-
-
-def get_janice_highscore():
-    return HighScoresData(universe_id=162, community='en', do_init=True)
-
-
-def get_janice_universe():
-    return UniverseData(universe_id=162, community='en')
 
 
 app_tag = 'ONSA - Defending Our Empire. Securing the Future'
@@ -218,15 +210,15 @@ class UniverseFigure:
     minimum_distance = 1
     shift_to_yaxis = math.pi / 2
     universe_data: UniverseData
-    highscore_data: HighScoresData
+    highscore_data: HighScoreData
     figure: go.Figure
     df_dummy: pd.DataFrame
     df: pd.DataFrame
     coordinates_df: pd.DataFrame
 
     def __init__(self):
-        self.highscore_data = get_janice_highscore()
-        self.universe_data = get_janice_universe()
+        self.highscore_data = HighScoreData(universe_id=162, community='en')
+        self.universe_data = UniverseQuestions(universe_id=162, community='en')
         self.df_dummy = self.get_dummy_universe_df()
         self.df = self.get_dummy_universe_df()
         self.df = self.insert_universe_data(self.df)

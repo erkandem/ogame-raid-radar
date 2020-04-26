@@ -315,9 +315,10 @@ class UniverseFigure:
             }
         })
 
-    def _get_figure_data(self, df):
+    def _get_figure_data(self, df: pd.DataFrame) -> List[go.Scattergl]:
         """
-            query_str:
+        casts data within a pandas object into a list of dash object.
+
         """
         query_str = 'planet == @planet_slot'
         data = [

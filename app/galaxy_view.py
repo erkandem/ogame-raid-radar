@@ -143,7 +143,6 @@ def validate_user_range(user_range):
     return user_range
 
 
-
 def calculate_radius(
         planet_slot: Union[int, float],
         *,

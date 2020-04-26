@@ -720,7 +720,6 @@ def update_graph_1(jsonified_cleaned_data, figure):
     figure = replace_figure_data(figure, 'user_vector', user)
     figure = replace_figure_data(figure, 'lower_limit', lower_limit)
     figure = replace_figure_data(figure, 'upper_limit', upper_limit)
-
     return figure
 
 

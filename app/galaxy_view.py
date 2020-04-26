@@ -420,23 +420,21 @@ class UniverseFigure:
         coords = self.universe_data.universe.query(query_str)['coords'].to_list()
         return self.df.query('taken == 1 and coords in @coords')
 
+    def get_inactive_player(self):
+        inactive = self._get_inactive_players()
+        query_str = 'player == @inactive'
+        df_raw = self.universe_data.universe.query(query_str)
+        df_raw.rename(index=str, columns={'name': 'planet_name'}, inplace=True)
+        df = self.get_universe_with_player_details(df_raw)
+        return df
 
-def get_inactive_player():
-    inactive = UNIVERSE_FIGURE._get_inactive_players()
-    query_str = 'player == @inactive'
-    df_raw = UNIVERSE_FIGURE.universe_data.universe.query(query_str)
-    df_raw.rename(index=str, columns={'name': 'planet_name'}, inplace=True)
-    df = UNIVERSE_FIGURE.get_universe_with_player_details(df_raw)
-    return df
-
-
-def get_active_player():
-    active = UNIVERSE_FIGURE._get_inactive_players()
-    query_str = 'player == @active'
-    df_raw = UNIVERSE_FIGURE.universe_data.universe.query(query_str)
-    df_raw.rename(index=str, columns={'name': 'planet_name'}, inplace=True)
-    df = UNIVERSE_FIGURE.get_universe_with_player_details(df_raw)
-    return df
+    def get_active_player(self):
+        active = self._get_inactive_players()
+        query_str = 'player == @active'
+        df_raw = self.universe_data.universe.query(query_str)
+        df_raw.rename(index=str, columns={'name': 'planet_name'}, inplace=True)
+        df = self.get_universe_with_player_details(df_raw)
+        return df
 
 
 def cast_to_dash_table(df: pd.DataFrame) -> dse.DataTable:
@@ -589,10 +587,10 @@ def show_taken_or_free(activeOrInactive, takenOrFree, figure):
 )
 def render_data_table(activeOrInactive, takenOrFree, child):
     if activeOrInactive == 'active' and takenOrFree == 'taken':
-        df = get_active_player()
+        df = UNIVERSE_FIGURE.get_active_player()
         return html.Div(cast_to_dash_table(df))
     if activeOrInactive == 'inactive' and takenOrFree == 'taken':
-        df = get_inactive_player()
+        df = UNIVERSE_FIGURE.get_inactive_player()
         return html.Div(cast_to_dash_table(df))
     if activeOrInactive == 'active' and takenOrFree == 'free':
         df = UNIVERSE_FIGURE.get_free_planets_data()

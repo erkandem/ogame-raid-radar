@@ -541,7 +541,7 @@ def get_initial_app_layout():
             ),
             html.Div(id='universe-data-interactivity-container')
         ])
-    ], className='aptry')
+    ], className='raid-radar-app')
 
 
 UNIVERSE_FIGURE = UniverseFigure()

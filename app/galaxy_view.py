@@ -151,7 +151,6 @@ class UniverseFigure:
         self.df_dummy = self.get_dummy_universe_df()
         self.df = self.get_dummy_universe_df()
         self.df = self.insert_universe_data(self.df)
-        self.coordinates_df = self.generate_coordinates_df()
 
     def get_dummy_universe_df(self):
         universe = [{
@@ -170,20 +169,6 @@ class UniverseFigure:
             for planet in self.planets_range
         ]
         df = pd.DataFrame(universe)
-        return df
-
-    def generate_coordinates_df(self):
-        all_coordinates = [{
-            'galaxy': galaxy,
-            'system': system,
-            'planet': planet,
-            'coords': f'{galaxy}:{system}:{planet}',
-        }
-            for galaxy in self.galaxies_range
-            for system in self.systems_range
-            for planet in self.planets_range
-        ]
-        df = pd.DataFrame(all_coordinates)
         df['n'] = self.calculate_linear_coordinate(df)
         return df
 
@@ -231,7 +216,7 @@ class UniverseFigure:
         Returns:
             (dict) with `galaxy`, `system` and `planet` keys, with integer values
         """
-        coords = self.coordinates_df.query('n == @lin_coord')
+        coords = self.df_dummy.query('n == @lin_coord')
         coords = coords.to_dict(orient='records')
         coords = coords[0]
         return coords

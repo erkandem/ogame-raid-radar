@@ -93,7 +93,7 @@ def validate_coords(coords):
 def validate_user_coords(coords: str):
     """a regex utility to validate user input to sth numerical"""
     result = re.findall(
-        r'^([1-9]{1})'  # galaxy
+        r'^([1-9])'  # galaxy
         r':([1-9]{1,3})'  # system
         r':([1-9]{1,2})$',  # planet
         coords

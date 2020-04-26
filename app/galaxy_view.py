@@ -544,8 +544,12 @@ def get_initial_app_layout():
                     'output will be rendered aqui',
                     id='universe-range-query-ouput'
                 ),
-                html.Div('[{}]', id='universe-range-query-intermediate-data', style={'display': 'none'}),
-            ], id='universe-range-query-container'),
+                html.Div(
+                    '[{}]',
+                    id='universe-range-query-intermediate-data',
+                    style={'display': 'none'}),
+            ], id='universe-range-query-container'
+            ),
             html.Div(id='universe-data-interactivity-container')
         ])
     ], className='aptry')

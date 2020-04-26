@@ -111,7 +111,7 @@ def parse_user_coords(coords: str):
 
 def calculate_limits_coord(user_coords: {}, user_range: int) -> {}:
     if user_range < 1:
-        raise NotImplementedError('range must be positiv non zero')
+        raise NotImplementedError('range must be positive non zero')
     if user_range > (max(UNIVERSE_FIGURE.systems_range)):
         raise NotImplementedError(
             'Overflow not implemented (move from end of universe to beginning)'

@@ -162,39 +162,6 @@ def calculate_radius(
     return minimum_distance + planet_increment * planet_slot
 
 
-def calculate_system_degree(
-        coords: {},
-        *,
-        galaxy_increment: float = None,
-        system_increment: float = None,
-        shift_to_yaxis: float = None
-) -> Union[float, pd.DataFrame]:
-    """
-    assumes the universe is modelled clock like in a circle where each
-    system corresponds to the minutes/seconds/hours expressed in a degree
-    between 0 and 2 * pi.
-
-    Args:
-        coords (dict, df): dict like with keys `galaxy` (int, float) and `system` (int, float)
-        galaxy_increment (float):
-        system_increment (float):
-        shift_to_yaxis (float):
-
-    """
-    if galaxy_increment is None:
-        galaxy_increment = (2 * math.pi) / 9
-    if system_increment is None:
-        system_increment = galaxy_increment / 499
-    if shift_to_yaxis is None:
-        shift_to_yaxis = math.pi / 2
-    system_degree = (
-            (coords['galaxy'] - 1) * galaxy_increment
-            + (coords['system'] - 1) * system_increment
-            + shift_to_yaxis
-    )
-    return system_degree
-
-
 class UniverseFigure:
     galaxies_range = list(range(1, 10))
     systems_range = list(range(1, 500))
@@ -274,9 +241,41 @@ class UniverseFigure:
         )
         return value
 
+    def calculate_system_degree(
+            self,
+            df: Union[pd.DataFrame, Dict],
+            *,
+            galaxy_increment: float = None,
+            system_increment: float = None,
+            shift_to_yaxis: float = None
+    ) -> Union[pd.Series, float]:
+        """
+        assumes the universe is modelled clock like in a circle where each
+        system corresponds to the minutes/seconds/hours expressed in a degree
+        between 0 and 2 * pi.
+
+        will prefer user supplied values in `kwargs` or look them up in the instance
+
+        Args:
+            coords (pd.DataFrame, dict): dict like with keys `galaxy` (int, float) and `system` (int, float)
+            galaxy_increment (float):
+            system_increment (float):
+            shift_to_yaxis (float):
+
+        Returns:
+            (pd.Series, float): depending on the input
+
+        """
+        system_degree = (
+                (df['galaxy'] - 1) * galaxy_increment or self.galaxy_increment
+                + (df['system'] - 1) * system_increment or self.system_increment
+                + shift_to_yaxis or self.shift_to_yaxis
+        )
+        return system_degree
+
     def insert_universe_data(self, df):
         df['taken'] = df['coords'].apply(lambda x: int(self.universe_data.is_planet_taken(x)))
-        df = self.calculate_system_degree_df(df)
+        df['system_degree'] = self.calculate_system_degree(df)
         df['x'] = df['system_degree'].apply(lambda x: math.cos(x))
         df['y'] = df['system_degree'].apply(lambda x: math.sin(x))
         df['r'] = df['planet'].apply(lambda x: self.calculate_radius(x))
@@ -659,10 +658,10 @@ def aggregate_data_processing(user_coords, user_range):
         return json.dumps([{'error_msg': 'server error'}])
     data = [{
         'plotable_limits': {
-            'user': {'phi': calculate_system_degree(user_coords),
+            'user': {'phi': UNIVERSE_FIGURE.calculate_system_degree(user_coords),
                      'radius': calculate_radius(user_coords['planet'])},
-            'lower': {'phi': calculate_system_degree(limits['lower']), 'radius': calculate_radius(limits['lower']['planet'])},
-            'upper': {'phi': calculate_system_degree(limits['upper']), 'radius': calculate_radius(limits['upper']['planet'])}
+            'lower': {'phi': UNIVERSE_FIGURE.calculate_system_degree(limits['lower']), 'radius': calculate_radius(limits['lower']['planet'])},
+            'upper': {'phi': UNIVERSE_FIGURE.calculate_system_degree(limits['upper']), 'radius': calculate_radius(limits['upper']['planet'])}
         },
         'query_limits': {
             'lower': UNIVERSE_FIGURE.calculate_linear_coordinate(limits['lower']),

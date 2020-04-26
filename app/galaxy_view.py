@@ -163,22 +163,17 @@ def calculate_radius(
 
 
 class UniverseFigure:
-    galaxies_range = list(range(1, 10))
-    systems_range = list(range(1, 500))
-    planets_range = list(range(1, 16))
-    planet_increment = 1 / (15 * 2)
-    galaxy_increment = (2 * math.pi) / 9
-    system_increment = galaxy_increment / 499
-    minimum_distance = 1
-    shift_to_yaxis = math.pi / 2
-    universe_data: UniverseData
-    highscore_data: HighScoreData
-    figure: go.Figure
-    df_dummy: pd.DataFrame
-    df: pd.DataFrame
-    coordinates_df: pd.DataFrame
 
     def __init__(self):
+        self.galaxies_range = list(range(1, 10))
+        self.systems_range = list(range(1, 500))
+        self.planets_range = list(range(1, 16))
+        self.planet_increment = 1 / (max(self.planets_range) * 2)
+        self.galaxy_increment = (2 * math.pi) / max(self.galaxies_range)
+        self.system_increment = self.galaxy_increment / max(self.systems_range)
+        self.minimum_distance = 1
+        self.shift_to_yaxis = math.pi / 2
+        self.figure = None
         self.highscore_data = HighScoreData(universe_id=162, community='en')
         self.universe_data = UniverseQuestions(universe_id=162, community='en')
         self.df_dummy = self.get_dummy_universe_df()
@@ -205,17 +200,16 @@ class UniverseFigure:
         df = pd.DataFrame(universe)
         return df
 
-    @staticmethod
-    def generate_coordinates_df():
+    def generate_coordinates_df(self):
         all_coordinates = [{
             'galaxy': galaxy,
             'system': system,
             'planet': planet,
             'coords': f'{galaxy}:{system}:{planet}',
         }
-            for galaxy in UniverseFigure.galaxies_range
-            for system in UniverseFigure.systems_range
-            for planet in UniverseFigure.planets_range
+            for galaxy in self.galaxies_range
+            for system in self.systems_range
+            for planet in self.planets_range
         ]
         df = pd.DataFrame(all_coordinates)
         df['n'] = self.calculate_linear_coordinate(df)
@@ -549,7 +543,7 @@ import pickle
 with open('cache.pickle', 'rb') as file_2:
     UNIVERSE_FIGURE = pickle.load(file_2)
 
-COORDINATES_DF = UniverseFigure.generate_coordinates_df()
+COORDINATES_DF = UNIVERSE_FIGURE.generate_coordinates_df()
 server = flask.Flask(__name__)
 app = dash.Dash(
     __name__,

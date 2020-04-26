@@ -292,20 +292,20 @@ class UniverseFigure:
     def _get_default_layout(self):
         return go.Layout({
             'autosize': False,
-            'width': 700,
-            'height': 600,
+            'width': 650,
+            'height': 500,
             'plot_bgcolor': '#f9f9f9',
             'paper_bgcolor': '#f9f9f9',
             'margin': {'l': 20, 'b': 20, 't': 20, 'r': 20},
             'xaxis': {
-                'range': [1.75, -1.75],
+                'range': [1.55, -1.55],
                 'showgrid': False,
                 'tickmode': 'auto',
                 'nticks': 0,
                 'showticklabels': False
             },
             'yaxis': {
-                'range': [-1.75, 1.75],
+                'range': [-1.55, 1.55],
                 'showgrid': False,
                 'tickmode': 'auto',
                 'nticks': 0,

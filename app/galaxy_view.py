@@ -8,6 +8,7 @@ todo:
    - within the next 60 planets
 
 """
+import copy
 from datetime import datetime as dt
 import json
 import math
@@ -121,8 +122,9 @@ def calculate_limits_coord(user_coords: {}, user_range: int) -> {}:
     user_range = user_range * max(UNIVERSE_FIGURE.planets_range)
 
     # adjust the planet of the user to the last planet in the system
-    user_coords['planet'] = max(UNIVERSE_FIGURE.planets_range)
-    coords_linear = UNIVERSE_FIGURE.calculate_linear_coordinate(user_coords)
+    user_coords_copy = copy.deepcopy(user_coords)
+    user_coords_copy['planet'] = max(UNIVERSE_FIGURE.planets_range)
+    coords_linear = UNIVERSE_FIGURE.calculate_linear_coordinate(user_coords_copy)
     return {
         'lower': UNIVERSE_FIGURE._get_ogame_coordinate_from_linear(coords_linear - user_range),
         'upper': UNIVERSE_FIGURE._get_ogame_coordinate_from_linear(coords_linear + user_range)

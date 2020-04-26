@@ -251,7 +251,7 @@ class UniverseFigure:
         will prefer user supplied values in `kwargs` or look them up in the instance
 
         Args:
-            coords (pd.DataFrame, dict): dict like with keys `galaxy` (int, float) and `system` (int, float)
+            df (pd.DataFrame, dict): dict like with keys `galaxy` (int, float) and `system` (int, float)
             galaxy_increment (float):
             system_increment (float):
             shift_to_yaxis (float):

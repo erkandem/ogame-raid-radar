@@ -460,7 +460,14 @@ def get_active_player():
     return df
 
 
-def cast_to_dash_table(df):
+def cast_to_dash_table(df: pd.DataFrame) -> dse.DataTable:
+    """
+    casts the data of an pandas object into
+    dash DataTable object
+
+    Args:
+        df (pd.DataFrame):
+    """
     return dse.DataTable(**{
         'id': 'universe-data-table',
         'columns': [{'name': col, 'id': col} for col in df.columns],

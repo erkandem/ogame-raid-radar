@@ -420,7 +420,7 @@ class UniverseFigure:
         coords = self.universe_data.universe.query(query_str)['coords'].to_list()
         return self.df.query('taken == 1 and coords in @coords')
 
-    def get_inactive_player(self):
+    def get_inactive_players(self):
         inactive = self._get_inactive_players()
         query_str = 'player == @inactive'
         df_raw = self.universe_data.universe.query(query_str)
@@ -428,7 +428,7 @@ class UniverseFigure:
         df = self.get_universe_with_player_details(df_raw)
         return df
 
-    def get_active_player(self):
+    def get_active_players(self):
         active = self._get_inactive_players()
         query_str = 'player == @active'
         df_raw = self.universe_data.universe.query(query_str)
@@ -587,10 +587,10 @@ def show_taken_or_free(activeOrInactive, takenOrFree, figure):
 )
 def render_data_table(activeOrInactive, takenOrFree, child):
     if activeOrInactive == 'active' and takenOrFree == 'taken':
-        df = UNIVERSE_FIGURE.get_active_player()
+        df = UNIVERSE_FIGURE.get_active_players()
         return html.Div(cast_to_dash_table(df))
     if activeOrInactive == 'inactive' and takenOrFree == 'taken':
-        df = UNIVERSE_FIGURE.get_inactive_player()
+        df = UNIVERSE_FIGURE.get_inactive_players()
         return html.Div(cast_to_dash_table(df))
     if activeOrInactive == 'active' and takenOrFree == 'free':
         df = UNIVERSE_FIGURE.get_free_planets_data()

@@ -539,15 +539,7 @@ def get_initial_app_layout():
     ], className='aptry')
 
 
-debug = '''
 UNIVERSE_FIGURE = UniverseFigure()
-import pickle
-with open('cache.pickle', 'wb') as file:
-     pickle.dump(UNIVERSE_FIGURE, file)'''
-import pickle
-with open('cache.pickle', 'rb') as file_2:
-    UNIVERSE_FIGURE = pickle.load(file_2)
-
 COORDINATES_DF = UNIVERSE_FIGURE.generate_coordinates_df()
 server = flask.Flask(__name__)
 app = dash.Dash(

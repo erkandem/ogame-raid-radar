@@ -1,0 +1,4 @@
+dash==1.11.0
+dash-table==4.6.2
+ogame-stats>=0.3.5
+requests_cache==0.5.2

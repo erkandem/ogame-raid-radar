@@ -120,8 +120,16 @@ def calculate_limits_linear(user_coords: {}, user_range: int) -> {}:
 
 
 def calculate_limits_coord(user_coords: {}, user_range: int) -> {}:
-    if 1 < user_range > 15*499:
-        raise NotImplementedError
+    if user_range < 1:
+        raise NotImplementedError('range must be positiv non zero')
+    if user_range > (max(UNIVERSE_FIGURE.systems_range)):
+        raise NotImplementedError('Overflow not implemented (move from end of universe to beginning)')
+
+    # translate user_range to systems
+    user_range = user_range * max(UNIVERSE_FIGURE.planets_range)
+
+    # adjust the planet of the user to the last planet in the system
+    user_coords['planet'] = max(UNIVERSE_FIGURE.planets_range)
     coords_linear = UNIVERSE_FIGURE.calculate_linear_coordinate(user_coords)
     return {
         'lower':  _get_ogame_coordinate(coords_linear - user_range),

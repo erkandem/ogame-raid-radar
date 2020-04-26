@@ -615,17 +615,27 @@ def render_data_table(activeOrInactive, takenOrFree, child):
      State('universe-taken-free-toggle', 'value'),
      State('universe-data-interactivity-container', 'children')]
 )
-def update_graphs(rows, derived_virtual_selected_rows, activeOrInactive, takenOrFree, container_child):
+def update_graphs(
+        rows,
+        derived_virtual_selected_rows,
+        activeOrInactive,
+        takenOrFree,
+        container_child
+):
     """
-    What does it do? document immidiatly
+    Update graphs according to data in the dashTable
 
-        rows:
+        rows: rows of  data to plot
         derived_virtual_selected_rows:
-        activeOrInactive:
-        takenOrFree:
+        activeOrInactive: value of player status selector
+        takenOrFree: value of planet status selector
+        container_child: dummy html container element used to start the app
+
     """
     if derived_virtual_selected_rows is None:
         derived_virtual_selected_rows = []
+    if not rows:
+        return container_child
     if len(rows) == 0:
         return container_child
     dff = pd.DataFrame(rows)

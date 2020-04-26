@@ -483,7 +483,9 @@ def get_initial_app_layout():
             html.H3('Raid Radar'),
             html.Div(
                 'The plot below will visualize the planets in the area of your planet'
-                ' form which your starting to collect the resources of inactive users'),
+                ' form which your starting to collect the resources of inactive users'
+            ),
+            html.Br(),
             html.Div([
                 html.Div([
                     html.Label('acceptable travel range in systems (e.g. 1-499)'),
@@ -508,11 +510,13 @@ def get_initial_app_layout():
                     style={'display': 'none'}),
             ], id='universe-range-query-container'
             ),
+            html.Br(),
             dcc.Graph(
                     figure=UNIVERSE_FIGURE.get_taken_inactive_planets_fig(),
                     config={},
                     id='universe-graph'
                 ),
+            html.Br(),
             dcc.Loading(
                 html.Div([
                     html.Div(

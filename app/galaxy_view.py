@@ -318,7 +318,10 @@ class UniverseFigure:
     def _get_figure_data(self, df: pd.DataFrame) -> List[go.Scattergl]:
         """
         casts data within a pandas object into a list of dash object.
+        iterate over each all planet slots available for that universe
+        and create a scatter char with for each slot (same slot -> same radius).
 
+        TODO change color intensity with eco score of each planet to represent juiciness
         """
         query_str = 'planet == @planet_slot'
         data = [

@@ -90,7 +90,7 @@ def validate_coords(coords):
     return coords
 
 
-def validate_user_coords(coords: str):
+def parse_user_coords(coords: str):
     """a regex utility to validate user input to sth numerical"""
     result = re.findall(
         r'^([1-9])'  # galaxy
@@ -652,7 +652,7 @@ def aggregate_data_processing(user_coords, user_range):
     """
     dangerous - using an invisible dict to store data in the clients browser
     """
-    user_coords = validate_user_coords(user_coords)
+    user_coords = parse_user_coords(user_coords)
     if len(list(user_coords)) == 0:
         return json.dumps([{'error_msg': 'invalid coordinates'}])
     user_range = validate_user_range(user_range)

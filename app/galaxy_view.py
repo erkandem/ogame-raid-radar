@@ -492,7 +492,7 @@ def get_initial_app_layout():
         ),
         dcc.RadioItems(
             options=[
-                {'label': 'free', 'value': 'free'},
+                {'label': 'free', 'value': 'free', 'disabled': True},
                 {'label': 'taken', 'value': 'taken'}
             ],
             value='taken',

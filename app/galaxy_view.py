@@ -112,16 +112,6 @@ def _get_ogame_coordinate(lin_coord: int):
     return coords
 
 
-def calculate_limits_linear(user_coords: {}, user_range: int) -> {}:
-    if 1 < user_range > 15*499:
-        raise NotImplementedError
-    coords_linear = UNIVERSE_FIGURE.calculate_linear_coordinate(user_coords)
-    return {
-        'lower': coords_linear - user_range,
-        'upper': coords_linear + user_range
-    }
-
-
 def calculate_limits_coord(user_coords: {}, user_range: int) -> {}:
     if user_range < 1:
         raise NotImplementedError('range must be positiv non zero')

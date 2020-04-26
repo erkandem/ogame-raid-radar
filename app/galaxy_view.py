@@ -30,11 +30,6 @@ from ogame_stats import HighScoreData
 import requests_cache
 requests_cache.install_cache('demo_cache')
 
-from src.utils import calc_distance
-from src.utils import calc_flight_time
-from src.planet import Location
-from src.planet import Coords
-
 
 app_tag = 'ONSA - Defending Our Empire. Securing the Future'
 CSS_LIST = ['/static/sakura-earthly.css']

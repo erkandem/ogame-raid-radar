@@ -384,7 +384,17 @@ class UniverseFigure:
         query_str = 'taken == 0'
         return self.df.query(query_str)
 
-    def get_universe_with_player_details(self, df_raw):
+    def get_universe_with_player_details(self, df_raw: pd.DataFrame) -> pd.DataFrame:
+        """
+        Adds, player, alliance and economy score data to an initial data set within `df_raw`.
+
+        Args:
+            df_raw:
+
+        Returns:
+            (pd.DataFrame)
+
+        """
         df_player_name = UNIVERSE_FIGURE.universe_data.players.loc[:, ['id', 'name', 'status', 'alliance']]
         df_player_name.set_index('alliance', inplace=True)
         df_player_name.rename(index=str, columns={'id': 'player_id','name': 'player_name'}, inplace=True)

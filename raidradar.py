@@ -548,15 +548,11 @@ app.layout = get_initial_app_layout()
     Output('universe-data-interactivity-container', 'children'),
     [Input('universe-data-table', 'derived_virtual_data'),
      Input('universe-data-table', 'derived_virtual_selected_rows')],
-    [State('universe-active-inactive-toggle', 'value'),
-     State('universe-taken-free-toggle', 'value'),
-     State('universe-data-interactivity-container', 'children')]
+     [State('universe-data-interactivity-container', 'children')]
 )
 def update_graphs(
         rows,
         derived_virtual_selected_rows,
-        activeOrInactive,
-        takenOrFree,
         container_child
 ):
     """

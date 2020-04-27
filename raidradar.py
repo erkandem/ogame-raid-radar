@@ -234,16 +234,15 @@ class UniverseFigure:
 
     def calculate_linear_coordinate(
             self,
-            df:
-            Union[pd.DataFrame, Dict]
+            df: Union[pd.DataFrame, Dict]
     ) -> Union[pd.Series, int]:
         """
         calculates a unique planet ID (integer) based on the universe configuration.
-        
+
         Inverse of `_get_ogame_coordinate_from_linear`
-        
+
         Args:
-            df (pd.DataFrame): contains at least `galaxy`, `system` `planet`.
+            df (pd.Series, Dict): contains at least `galaxy`, `system` `planet` keys with values.
         """
 
         value = (

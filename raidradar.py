@@ -466,11 +466,12 @@ class UniverseFigure:
 
 def cast_to_dash_table(df: pd.DataFrame, columns: List = None) -> dse.DataTable:
     """
-    casts the data of an pandas object into
-    dash DataTable object
+    casts the data of a pandas object into dash DataTable object
 
     Args:
         df (pd.DataFrame):
+        columns (list): a list of columns to include in the DataTable
+
     """
     if not columns:
         columns = df.columns

@@ -43,6 +43,17 @@ def search_area_donut(
         upper_phi: float = None,
         shift_to_yaxis: float = None
 ) -> [go.Pie]:
+    """
+    An attempt to highlight the selected searcharea with a donut plot object.
+
+    Args:
+        lower_phi (float):
+        upper_phi (float):
+        shift_to_yaxis (float):
+
+    Returns:
+         (go.Pi)
+    """
     if not lower_phi:
         lower_phi = math.pi / 4
     if not upper_phi:

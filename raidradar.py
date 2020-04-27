@@ -39,9 +39,9 @@ def nowstr():
 
 
 def search_area_donut(
-        lower_phi=None,
-        upper_phi=None,
-        shift_to_yaxis=None
+        lower_phi: float = None,
+        upper_phi: float = None,
+        shift_to_yaxis: float = None
 ) -> [go.Pie]:
     if not lower_phi:
         lower_phi = math.pi / 4

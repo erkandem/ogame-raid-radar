@@ -2,3 +2,4 @@ dash
 dash-table
 ogame-stats
 requests_cache
+gunicorn

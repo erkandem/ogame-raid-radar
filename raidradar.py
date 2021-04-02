@@ -9,6 +9,7 @@ todo:
 
 """
 import copy
+
 from datetime import datetime as dt
 import json
 import math
@@ -25,10 +26,18 @@ import pandas as pd
 import plotly.graph_objects as go
 from ogame_stats import UniverseQuestions
 from ogame_stats import HighScoreData
+from ogame_stats import UniversesData
+from datetime import timedelta
 import requests_cache
 
 
-requests_cache.install_cache('demo_cache')
+
+requests_cache.install_cache(
+    'demo_cache',
+    # see https://github.com/erkandem/ogame-stats for a suggestions of
+    # cache durations
+    expire_after=timedelta(hours=1)
+)
 
 GALAXY_NUMBER_MIN = 1
 GALAXY_NUMBER_MAX = 9
@@ -38,6 +47,28 @@ PLANET_NUMBER_MIN = 1
 PLANET_NUMBER_MAX = 15
 
 
+#####################
+# change these two variables to display an other universe
+UNIVERSE_NUMBER = 1
+UNIVERSE_COMMUNITY = 'de'
+#####################
+
+COSMOS = UniversesData()
+
+
+def update_galaxy(universe_number: int, universe_community: str):
+    """ ask the ogamae api for the real number of galaxies"""
+    universe = COSMOS.data.query("language == @universe_community and number == @universe_number")
+    if len(universe) == 0:
+        raise ValueError('could not find the targeted universe %s %s' % (universe_number, universe_community))
+    elif len(universe) > 1:
+        raise ValueError('found more than one universe %s %s' % (universe_number, universe_community))
+    galaxy_number_max = universe.settings.iloc[0]['universeSize']
+    print('updating galaxy_number_max from %s to  %s' % (GALAXY_NUMBER_MAX, galaxy_number_max))
+    return galaxy_number_max
+
+
+GALAXY_NUMBER_MAX = update_galaxy(universe_number=UNIVERSE_NUMBER, universe_community=UNIVERSE_COMMUNITY)
 app_tag = 'ONSA - Defending Our Empire. Securing the Future'
 CSS_LIST = [
     '/static/sakura-solarized-dark.css',
@@ -133,14 +164,14 @@ def validate_user_range(user_range):
 
 class UniverseFigure:
 
-    def __init__(self, universe_id: int = 162, community: str ='en'):
+    def __init__(self, universe_id: int = UNIVERSE_NUMBER, community: str = UNIVERSE_COMMUNITY):
         """
         TODO: remove hardcoding of universe to plot, and galaxies per universe and so on
               these values depend on the specific universe
         """
-        self.galaxies_range = list(range(1, 10))
-        self.systems_range = list(range(1, 500))
-        self.planets_range = list(range(1, 16))
+        self.galaxies_range = list(range(GALAXY_NUMBER_MIN, GALAXY_NUMBER_MAX + 1))
+        self.systems_range = list(range(SOLAR_SYSTEM_NUMBER_MIN, SOLAR_SYSTEM_NUMBER_MAX + 1))
+        self.planets_range = list(range(PLANET_NUMBER_MIN, PLANET_NUMBER_MAX + 1))
         self.planet_increment = 1 / (max(self.planets_range) * 2)
         self.galaxy_increment = (2 * math.pi) / max(self.galaxies_range)
         self.system_increment = self.galaxy_increment / max(self.systems_range)
@@ -495,7 +526,7 @@ def cast_to_dash_table(df: pd.DataFrame, columns: List[str] = None) -> dse.DataT
 def get_initial_app_layout():
     return html.Div([
         html.Div([
-            html.H3('Raid Radar'),
+            html.H3('Raid Radar for universe %s in community %s' % (UNIVERSE_NUMBER, UNIVERSE_COMMUNITY)),
             html.Div(
                 'The plot below will visualize the planets in the area of your planet'
                 ' form which your starting to collect the resources of inactive users'

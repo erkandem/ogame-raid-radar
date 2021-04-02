@@ -5,21 +5,21 @@ a python dash app to visualize inactive players in a universe for https://ogame.
 ---
 
 ## Demo
- Get an interactive plot with all inanctive players on a server and get highlight the ones
+ Get an interactive plot with all inactive players on a server and get highlighted the ones
  near to your departure planet.
-![all inactive players viszualized](static/styledsample.png)
+![all inactive players visualized](static/styledsample.png)
 
-Look through the list and find the most lucrative ones (highest economy score). 
-Get all values as a `csv` file by hitting the `export` button
+Look through the list and find the most lucrative targets to attack (highest economy score). 
+Get all values exported as a `csv` file by hitting the `export` button.
 ![all inactive players in a table](static/sample_table.png)
 
 
 ## usage
 The app can be used after the  usual steps of 
  - getting the code, 
- - creating a virtualenv and activating it to protect your system python version,
+ - creating a virtualenv and activating it to protect your system python env,
  - installing the required third party packages and
- - finally starting the app
+ - finally, starting the app
 
 ```bash
 git clone <adress of raid radar repo > <target>
@@ -32,10 +32,10 @@ python raidradar.py
 
 ## How is it done?
 First forget about Newton, heliocentric view, or physics in general. The idea here is to get a visualisation logic.
-So:
+Imagine:
  - All `planets` exist around a fictional `center of the universe (x = 0, y = 0)`.
- - The distance of a planet from the core of the universe represents its solar system position in the game. 
- - The `galaxy` and `solar system` are represented by an angle. much like second relate to minute on a regular analog clock.
+ - The `galaxy` and `solar system` are represented by an angle.
+ - The distance (radius) of a planet from the core of the universe represents the planets position in a `solar system`.
  
 
 Here is the math behind it:
@@ -49,50 +49,51 @@ z = x + iy
 z = r(cos(phi) + i * sin(phi))
 ```
 `galaxy_increment` and `system_increment` depend on the galaxies in the universe and systems in a galaxy.
-Essentially these constants are just there to ensure that our planets are spread equally and only between `0` in `2pi` (pi like 3.1415)
+Essentially, these constants are just there to ensure that our planets are spread equally and only between `0` in `2pi` (pi like 3.1415)
 
-The plot would start at `y = 0` (representing 1:1:1) and continue counter clockwise. 
-That is why `shift_to_yaxis` is introduced into calculation of `phi`. 
-Now the plot starts at `x = 0` but still continues counter clockwise.
+The plot would start at `y = 0` (representing in-game coordinates of 1:1:1) and continue counter clockwise. 
+That works if you spent too much time with graphs. Let's make it more intuitive  by introducing `shift_to_yaxis`.
+Now the plot starts at `x = 0`.
 
 Usually `r` would be calculated:
 
 ```
 r = |z| = sqrt(x^2 + y^2)
 ```
-In that scenario r would form the classic spiral form. Not what we want.
-Instead we set `r = 1` - for now - and get our preliminary `x` and `y` values
+In that scenario `r` would form the spiral form. Which is not what we want.
+Instead, we set `r = 1` - for now - and get our preliminary `x` and `y` values
 ```
 r = 1 
 x = Re(z) = cos(phi)
 y = Im(z) = sin(phi)
 ```
 
-Okay, `galaxies` and the `solar system` are represented by an angle `phi`
+`galaxies` and the `solar system` are represented by an angle `phi`.
 We could use `r` to represent the `slot` in the `solar system` such that
 `slot = 5` would translates to fifth planet in the respective `solar system`.
 An empirical constant `minimum_distance` and `planet_increment` is set to ensure 
-that all elements are spread out across the plot (i.e. planets) can be plotted.
+that all elements (i.e. planets) are spread out across the plot without overlapping each other.
 
 ```
 r(planet_slot) = f(planet_slot) = planet_increment * planet_slot + minimum_distance
 ```
 
-The final ready to coordinates for cartesian plot can than be obtained with:
+The final ready to plot coordinates for a cartesian plot can than be obtained with:
 
 ```
 x = r(planet_slot) * cos(phi(galaxy, system))
 y = r(planet_slot) * sin(phi(galaxy, system))
 ```
 
-The plot is running counter clockwise which non intuitive.
-To match it with an intuitive clock pattern **the `xaxis` is reversed**.
+The plot is running counter clockwise which non-intuitive for non-math people.
+To match it with an intuitive clock pattern **the `x-axis` is reversed**.
 
 
 > Note We never actually touched complex numbers but borrowed the concept of 
 > the complex plain to visualize complex numbers!
 
 ## Constraints
+
 1. I created this app mostly for my self to learn more about dash table elements.
    Note that the project uses a global variable `UNIVERSE_FIGURE`. That means that the app will break 
    with multiple users.

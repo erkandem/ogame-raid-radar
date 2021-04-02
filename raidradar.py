@@ -21,77 +21,66 @@ import dash_html_components as html
 import dash_core_components as dcc
 import dash_table as dse
 import flask
-import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
-from ogame_stats import UniverseData, UniverseQuestions
+from ogame_stats import UniverseQuestions
 from ogame_stats import HighScoreData
 import requests_cache
+
+
 requests_cache.install_cache('demo_cache')
+
+GALAXY_NUMBER_MIN = 1
+GALAXY_NUMBER_MAX = 9
+SOLAR_SYSTEM_NUMBER_MIN = 1
+SOLAR_SYSTEM_NUMBER_MAX = 499
+PLANET_NUMBER_MIN = 1
+PLANET_NUMBER_MAX = 15
 
 
 app_tag = 'ONSA - Defending Our Empire. Securing the Future'
-CSS_LIST = ['/static/sakura-solarized-dark.css']
+CSS_LIST = [
+    '/static/sakura-solarized-dark.css',
+]
+
+DEFAULT_COLUMNS = [
+    'coords',
+    'galaxy',
+    'system',
+    'planet',
+    'taken',
+    'planet_name',
+    'player_name',
+    'status',
+    'alliance_name',
+    'eco_score',
+]
 
 
-def nowstr():
+def nowstr() -> str:
     return dt.now().strftime('%Y%m%d %H:%M:%S.%f')
 
 
-def search_area_donut(
-        lower_phi: float = None,
-        upper_phi: float = None,
-        shift_to_yaxis: float = None
-) -> [go.Pie]:
-    """
-    An attempt to highlight the selected searcharea with a donut plot object.
-
-    Args:
-        lower_phi (float):
-        upper_phi (float):
-        shift_to_yaxis (float):
-
-    Returns:
-         (go.Pi)
-    """
-    if not lower_phi:
-        lower_phi = math.pi / 4
-    if not upper_phi:
-        upper_phi = math.pi / 4 + math.pi / 4
-    if not shift_to_yaxis:
-        shift_to_yaxis = math.pi / 2
-    search_area = upper_phi - lower_phi
-    rad = 360 / (2 * math.pi)
-    remainder = 2 * math.pi - search_area
-    donut = go.Pie({
-        'rotation': rad * (search_area + lower_phi - shift_to_yaxis),
-        'values': [search_area, remainder],
-        'textinfo': 'none',
-        'hole': .9,
-        'marker': {
-            'colors': ['rgba(173,255,47,.3)', 'rgba(0,0,0,0.1)']
-        },
-        'showlegend': False,
-        'name': 'search_area_donut',
-        'hoverinfo': 'none',
-
-    })
-    return donut
-
-
-def validate_coords(coords):
+def validate_coords(coords: Dict[str, int]) -> Dict[str, int]:
     """
     validate each part of the user defined coordinate.
     assumes a universe with
      - 9 galaxies, with
      - 499 solar systems, with
      - 15 planets
+
+    Note:
+        these values are dependent on the game server itself.
+        Here, the default values are hardcoded. The actual values
+        could be retrieved from the ogame API?
+
+     returns an empty dictionary if invalid values are found
     """
-    if 1 < coords['galaxy'] > 9:
+    if GALAXY_NUMBER_MIN < coords['galaxy'] > GALAXY_NUMBER_MAX:
         return {}
-    if 1 < coords['system'] > 499:
+    if SOLAR_SYSTEM_NUMBER_MIN < coords['system'] > SOLAR_SYSTEM_NUMBER_MAX:
         return {}
-    if 1 < coords['planet'] > 15:
+    if PLANET_NUMBER_MIN < coords['planet'] > PLANET_NUMBER_MAX:
         return {}
     return coords
 
@@ -106,16 +95,16 @@ def parse_user_coords(coords: str):
     )
     if len(result) != 1:
         return {}
-    coords = {
+    coords_dict = {
         'galaxy': int(result[0][0]),
         'system': int(result[0][1]),
         'planet': int(result[0][2])
     }
-    coords = validate_coords(coords)
-    return coords
+    coords_dict = validate_coords(coords_dict)
+    return coords_dict
 
 
-def calculate_limits_coord(user_coords: {}, user_range: int) -> {}:
+def calculate_limits_coord(user_coords: Dict[str, int], user_range: int) -> Dict[str, Dict[str, int]]:
     if user_range < 1:
         raise NotImplementedError('range must be positive non zero')
     if user_range > (max(UNIVERSE_FIGURE.systems_range)):
@@ -137,14 +126,14 @@ def calculate_limits_coord(user_coords: {}, user_range: int) -> {}:
 
 
 def validate_user_range(user_range):
-    if 1 < user_range > 15*499:
+    if 1 < user_range > PLANET_NUMBER_MAX * SOLAR_SYSTEM_NUMBER_MAX:
         return None
     return user_range
 
 
 class UniverseFigure:
 
-    def __init__(self):
+    def __init__(self, universe_id: int = 162, community: str ='en'):
         """
         TODO: remove hardcoding of universe to plot, and galaxies per universe and so on
               these values depend on the specific universe
@@ -157,8 +146,8 @@ class UniverseFigure:
         self.system_increment = self.galaxy_increment / max(self.systems_range)
         self.minimum_distance = 1
         self.shift_to_yaxis = math.pi / 2
-        self.highscore_data = HighScoreData(universe_id=162, community='en')
-        self.universe_data = UniverseQuestions(universe_id=162, community='en')
+        self.highscore_data = HighScoreData(universe_id=universe_id, community=community)
+        self.universe_data = UniverseQuestions(universe_id=universe_id, community=community)
         self.df_dummy = self.get_dummy_universe_df()
         self.df = self.get_dummy_universe_df()
         self.df = self.insert_universe_data(self.df)
@@ -217,7 +206,7 @@ class UniverseFigure:
     def _get_ogame_coordinate_from_linear(
             self,
             lin_coord: int
-    ) -> {str: int}:
+    ) -> Dict[str, int]:
         """
         Inverse operation of `calculate_linear_coordinate`
 
@@ -225,16 +214,21 @@ class UniverseFigure:
             lin_coord(int):
 
         Returns:
-            (dict) with `galaxy`, `system` and `planet` keys, with integer values
+            dict with ``galaxy``, ``system`` and ``planet`` keys, with integer values
+
         """
-        coords = self.df_dummy.query('n == @lin_coord')
-        coords = coords.to_dict(orient='records')
-        coords = coords[0]
+        coords_df = self.df_dummy.query('n == @lin_coord')
+        coords_list = coords_df.to_dict(orient='records')
+        coords_dict = coords_list[0]
+        # only return subset of dict
+        coords = {}
+        for key in ('galaxy', 'system', 'planet',):
+            coords[key] = coords_dict[key]
         return coords
 
     def calculate_linear_coordinate(
             self,
-            df: Union[pd.DataFrame, Dict]
+            df: Union[pd.DataFrame, Dict[str, int]]
     ) -> Union[pd.Series, int]:
         """
         calculates a unique planet ID (integer) based on the universe configuration.
@@ -268,7 +262,7 @@ class UniverseFigure:
         will prefer user supplied values in `kwargs` or look them up in the instance
 
         Args:
-            df (pd.DataFrame, dict): dict like with keys `galaxy` (int, float) and `system` (int, float)
+            df (pd.DataFrame, dict): dict like, with keys ``galaxy`` (int, float) and ``system`` (int, float)
             galaxy_increment (float):
             system_increment (float):
             shift_to_yaxis (float):
@@ -290,7 +284,7 @@ class UniverseFigure:
         )
         return system_degree
 
-    def insert_universe_data(self, df):
+    def insert_universe_data(self, df: pd.DataFrame) -> pd.DataFrame:
         df['taken'] = df['coords'].apply(lambda x: int(self.universe_data.is_planet_taken(x)))
         df['system_degree'] = self.calculate_system_degree(df)
         df['x'] = df['system_degree'].apply(lambda x: math.cos(x))
@@ -309,8 +303,8 @@ class UniverseFigure:
                 },
                 'x': 0.025,
                 'y': 0.975,
-            'yanchor': 'top',
-            'xanchor': 'left',
+                'yanchor': 'top',
+                'xanchor': 'left',
             },
             'autosize': False,
             'width': 650,
@@ -365,7 +359,7 @@ class UniverseFigure:
         ]
         return data
 
-    def _get_figure(self, df):
+    def _get_figure(self, df: pd.DataFrame) -> go.Figure:
         data = self._get_figure_data(df)
         layout = self._get_default_layout()
         return go.Figure(
@@ -464,7 +458,7 @@ class UniverseFigure:
         return df
 
 
-def cast_to_dash_table(df: pd.DataFrame, columns: List = None) -> dse.DataTable:
+def cast_to_dash_table(df: pd.DataFrame, columns: List[str] = None) -> dse.DataTable:
     """
     casts the data of a pandas object into dash DataTable object
 
@@ -474,7 +468,7 @@ def cast_to_dash_table(df: pd.DataFrame, columns: List = None) -> dse.DataTable:
 
     """
     if not columns:
-        columns = df.columns
+        columns = DEFAULT_COLUMNS
     return dse.DataTable(**{
         'id': 'universe-data-table',
         'columns': [{'name': col, 'id': col} for col in columns],
@@ -543,7 +537,7 @@ def get_initial_app_layout():
                     html.Div(
                         cast_to_dash_table(
                             UNIVERSE_FIGURE.get_inactive_players(),
-                            columns=['coords','galaxy', 'system', 'planet', 'taken', 'planet_name', 'player_name', 'status', 'alliance_name', 'eco_score']
+                            columns=DEFAULT_COLUMNS
                         )
                     )
                 ], id='universe-data-table-wrapper')
@@ -559,46 +553,10 @@ app = dash.Dash(
     __name__,
     server=server,
     suppress_callback_exceptions=True,
-    external_stylesheets=CSS_LIST
+    external_stylesheets=CSS_LIST,
 )
 
 app.layout = get_initial_app_layout()
-
-
-@app.callback(
-    Output('universe-data-interactivity-container', 'children'),
-    [Input('universe-data-table', 'derived_virtual_data'),
-     Input('universe-data-table', 'derived_virtual_selected_rows')],
-     [State('universe-data-interactivity-container', 'children')]
-)
-def update_graphs(
-        rows,
-        derived_virtual_selected_rows,
-        container_child
-):
-    """
-    Update graphs according to data in the dashTable
-
-        rows: rows of  data to plot
-        derived_virtual_selected_rows:
-        activeOrInactive: value of player status selector
-        takenOrFree: value of planet status selector
-        container_child: dummy html container element used to start the app
-
-    """
-    if derived_virtual_selected_rows is None:
-        derived_virtual_selected_rows = []
-    if not rows:
-        return container_child
-    if len(rows) == 0:
-        return container_child
-    dff = pd.DataFrame(rows)
-    fig = UNIVERSE_FIGURE._get_figure(dff)
-    return dcc.Graph(
-        figure=fig,
-        config={},
-        id='universe-data-custom-graph'
-    )
 
 
 @app.callback(
@@ -646,12 +604,12 @@ def aggregate_data_processing(user_coords, user_range):
     [Input('universe-range-query-intermediate-data', 'children')],
     [State('universe-graph', 'figure')]
 )
-def update_graph_1(jsonified_cleaned_data, figure):
+def update_main_graph(jsonified_cleaned_data, figure):
     dataset = json.loads(jsonified_cleaned_data)[0]
     if 'plotable_limits' not in dataset:
         return figure
     dataset = dataset['plotable_limits']
-    min_raidus = UNIVERSE_FIGURE.minimum_distance
+    min_radius = UNIVERSE_FIGURE.minimum_distance
     user = go.Scattergl({
             'x': [0, dataset['user']['radius'] * math.cos(dataset['user']['phi'])],
             'y': [0, dataset['user']['radius'] * math.sin(dataset['user']['phi'])],
@@ -664,11 +622,11 @@ def update_graph_1(jsonified_cleaned_data, figure):
     })
     lower_limit = go.Scattergl({
             'x': [
-                min_raidus * math.cos(dataset['lower']['phi']),
+                min_radius * math.cos(dataset['lower']['phi']),
                 dataset['lower']['radius'] * math.cos(dataset['lower']['phi']),
             ],
             'y': [
-                min_raidus * math.sin(dataset['lower']['phi']),
+                min_radius * math.sin(dataset['lower']['phi']),
                 dataset['lower']['radius'] * math.sin(dataset['lower']['phi'])
             ],
             'mode': 'lines+markers',
@@ -680,11 +638,11 @@ def update_graph_1(jsonified_cleaned_data, figure):
     })
     upper_limit = go.Scattergl({
             'x': [
-                min_raidus * math.cos(dataset['upper']['phi']),
+                min_radius * math.cos(dataset['upper']['phi']),
                 dataset['upper']['radius'] * math.cos(dataset['upper']['phi']),
             ],
             'y': [
-                min_raidus * math.sin(dataset['upper']['phi']),
+                min_radius * math.sin(dataset['upper']['phi']),
                 dataset['upper']['radius'] * math.sin(dataset['upper']['phi'])
             ],
             'mode': 'lines+markers',
@@ -695,20 +653,37 @@ def update_graph_1(jsonified_cleaned_data, figure):
             'showlegend': False,
     })
 
-    def replace_figure_data(figure, figure_name, go_object):
-        for k, elm in enumerate(figure['data']):
+    def replace_figure_data(_figure, figure_name, go_object):
+        for k, elm in enumerate(_figure['data']):
             if 'name' in elm:
                 if elm['name'] == figure_name:
-                    figure['data'][k] = go_object
+                    _figure['data'][k] = go_object
                     break
-            if k + 1 == len(figure['data']):
-                figure['data'] = [go_object] + figure['data']
-        return figure
+            if k + 1 == len(_figure['data']):
+                _figure['data'] = [go_object] + _figure['data']
+        return _figure
 
     figure = replace_figure_data(figure, 'user_vector', user)
     figure = replace_figure_data(figure, 'lower_limit', lower_limit)
     figure = replace_figure_data(figure, 'upper_limit', upper_limit)
     return figure
+
+
+@app.callback(
+    Output('universe-data-table-wrapper', 'children'),
+    [Input('universe-range-query-intermediate-data', 'children')],
+)
+def update_dash_table(jsonified_cleaned_data: str):
+    """
+    Only the planets in the area selected by the user should be shown in the table
+    """
+    data = json.loads(jsonified_cleaned_data)
+    df = UNIVERSE_FIGURE.get_inactive_players()
+    upper = data[0]['query_limits']['upper']
+    lower = data[0]['query_limits']['lower']
+    df_subset = df[(df['n'] <= upper) * (df['n'] >= lower)]
+    new_table = cast_to_dash_table(df_subset)
+    return html.Div(new_table)
 
 
 if __name__ == '__main__':

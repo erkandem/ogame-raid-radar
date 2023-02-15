@@ -211,10 +211,10 @@ class UniverseFigure:
             planet_increment: Union[int, float] = None
     ) -> float:
         """
-        Plotting utility. Returns the the `radius` representing the distance
-        of the planet form the center of the universe.
+        Plotting utility. Returns the `radius` representing the distance
+        of the planet from the center of the universe.
         All planets with the same slot in each solar system are modelled to
-        have the same `radius`
+        have the same `radius`.
 
         The values `minimum_distance` and `planet_increment` are empirical.
 
@@ -528,10 +528,14 @@ def get_initial_app_layout():
         html.Div([
             html.H3('Raid Radar for universe %s in community %s' % (UNIVERSE_NUMBER, UNIVERSE_COMMUNITY)),
             html.Div(
-                'The plot below will visualize the planets in the area of your planet'
-                ' form which your starting to collect the resources of inactive users'
+                'The plot below will highlight the planets of inactive users within a set distance (+ and -) from your planet.'
+                ' You can use that information to raid/farm their resources. Although the users are certainly inactive,'
+                ' I strongly recommend to send a spy drone first inorder to scan for possible planetary defences and/or a stationed fleet.'
             ),
             html.Br(),
+                     html.Div(
+                      'After setting your acceptable travel range and your departure location you can export the results as a CSV file.'.
+                     )
             html.Div([
                 html.Div([
                     html.Label('acceptable travel range in systems (e.g. 1-499)'),

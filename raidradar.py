@@ -533,9 +533,9 @@ def get_initial_app_layout():
                 ' I strongly recommend to send a spy drone first inorder to scan for possible planetary defences and/or a stationed fleet.'
             ),
             html.Br(),
-                     html.Div(
-                      'After setting your acceptable travel range and your departure location you can export the results as a CSV file.'.
-                     )
+            html.Div(
+                'After setting your acceptable travel range and your departure location you can export the results as a CSV file.'.
+            ),
             html.Div([
                 html.Div([
                     html.Label('acceptable travel range in systems (e.g. 1-499)'),

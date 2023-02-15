@@ -528,13 +528,15 @@ def get_initial_app_layout():
         html.Div([
             html.H3('Raid Radar for universe %s in community %s' % (UNIVERSE_NUMBER, UNIVERSE_COMMUNITY)),
             html.Div(
-                'The plot below will highlight the planets of inactive users within a set distance (+ and -) from your planet.'
-                ' You can use that information to raid/farm their resources. Although the users are certainly inactive,'
-                ' I strongly recommend to send a spy drone first inorder to scan for possible planetary defences and/or a stationed fleet.'
+                'The plot below will highlight the planets of inactive users within a set distance (+ and -)'
+                ' from your planet.  You can use that information to raid/farm their resources.'
+                ' Although the users are certainly inactive, I strongly recommend to send a spy drone first'
+                ' inorder to scan for possible planetary defences and/or a stationed fleet.'
             ),
             html.Br(),
             html.Div(
-                'After setting your acceptable travel range and your departure location you can export the results as a CSV file.'.
+                'After setting your acceptable travel range and your departure location'
+                ' you can export the results as a CSV file.',
             ),
             html.Div([
                 html.Div([

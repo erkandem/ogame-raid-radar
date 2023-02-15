@@ -1,11 +1,6 @@
 """
 todo:
  - fix overflow from one 9:499:15 to 1:1:1
- - automate rendering after coordinates and range is entered by user
- - system specific range units (currently planets)
-   - 1 galaxy
-   - within 50 solar systems
-   - within the next 60 planets
 
 """
 import copy
